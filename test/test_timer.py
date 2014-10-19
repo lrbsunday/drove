@@ -3,7 +3,6 @@
 # vim:fenc=utf-8
 
 import time
-import drove.timer
 from drove.timer import Timer
 from nose.tools import raises
 
@@ -39,7 +38,7 @@ def _testing_fn_raise():
     raise ValueError
 
 
-def test_not_runnin():
+def test_not_running():
     """Testing Timer: not running thread"""
     x = Timer(0.1, lambda: None)
     x.running = True
@@ -55,10 +54,17 @@ def test_timer_except():
     x._run()
 
 
+def _stop(x):
+    def wrapper():
+        x.running = False
+    return wrapper
+
+
 def test_timer_sleep():
     """Testing Timer: internal sleep"""
     x = Timer(0.1, lambda: None)
+    x.fun = _stop(x)
     x.running = True
-    x.run()
+    x._run()
     x.stop()
     Timer.wait(1, seconds=0.1)
