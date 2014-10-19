@@ -14,3 +14,4 @@ install:
   - pip install .
 # command to run tests
 script: nosetests -v --with-coverage --cover-package=drove
+after_success: coveralls
