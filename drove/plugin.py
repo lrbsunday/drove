@@ -56,7 +56,7 @@ class Plugin(object):
         :type channel: :class:`Channel`
         :param channel: a channel to intercommunicate the plugin with others.
         """
-        plugin_dir = config.get("plugin_dir", ["/usr/lib/drove"]).split(",")
+        plugin_dir = config.get("plugin_dir", "/usr/lib/drove").split(",")
         PluginClass = Importer(class_suffix="Plugin", path=plugin_dir)
         return PluginClass(plugin_name, config, channel)
 
