@@ -11,6 +11,7 @@ python:
 install:
   - pip install nose
   - pip install coverage
+  - pip install coveralls
   - pip install .
 # command to run tests
 script: nosetests -v --with-coverage --cover-package=drove
