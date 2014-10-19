@@ -18,7 +18,7 @@ setup(
     name=project.NAME,
     version=project.VERSION,
     description=project.DESCRIPTION,
-    long_description=get_file_content('README.md'),
+    long_description=get_file_content('README.rst'),
     author=project.AUTHOR_NAME,
     author_email=project.AUTHOR_EMAIL,
     url=project.URL,

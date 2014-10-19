@@ -1,6 +1,16 @@
 drove
 =====
 
+.. image:: https://travis-ci.org/droveio/drove.svg?branch=master
+  :target: https://travis-ci.org/droveio/drove
+  :align: left
+  :alt: Build
+
+.. image:: https://pypip.in/download/drove/badge.svg
+    :target: https://pypi.python.org/pypi//drove/
+    :align: left
+    :alt: Downloads
+
 **drove** is a modern monitoring tool which support alerting
 (with escalation), auto-register nodes, statistics gathering
 and much more in a few lines of python code.
