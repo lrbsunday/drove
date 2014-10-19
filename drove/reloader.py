@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-"""
+"""This module contains classes and functions to help
+to reload plugins and configuration files on the fly.
 """
 
 from .timer import Timer
