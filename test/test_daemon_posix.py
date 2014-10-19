@@ -34,3 +34,4 @@ if os.name == "posix":
         d.start()
         assert d.pid == 100
         d.stop()
+        assert d.pid == 0
