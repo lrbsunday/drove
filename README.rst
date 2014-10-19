@@ -13,6 +13,10 @@ drove
     :target: https://pypi.python.org/pypi/drove/
     :alt: Latest PyPI version
 
+.. image:: https://coveralls.io/repos/droveio/drove/badge.png?branch=master
+    :target: https://coveralls.io/r/droveio/drove?branch=master
+
+
 **drove** is a modern monitoring tool which support alerting
 (with escalation), auto-register nodes, statistics gathering
 and much more in a few lines of python code.
