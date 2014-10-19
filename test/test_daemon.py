@@ -20,3 +20,10 @@ def test_daemon():
     """Testing Daemon: invalid platform"""
     os.name = 'foo'
     Daemon.create(lambda: None)
+
+
+@with_setup(teardown=_teardown)
+def test_daemon_posix():
+    """Testing Daemon: posix"""
+    os.name = 'posix'
+    Daemon.create(lambda: None)

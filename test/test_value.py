@@ -10,6 +10,7 @@ from nose.tools import raises
 def test_value():
     """Testing Value: dump()"""
     value = Value("example", 42, nodename="test", timestamp=0)
+    assert value.is_value()
     assert value.dump() == "V|0|test|example|42.0|g"
 
     value = Value("example", 42, nodename="test")

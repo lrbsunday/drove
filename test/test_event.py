@@ -11,6 +11,7 @@ def test_event():
     """Testing Event: dump()"""
     event = Event("example", "CRITICAL", "message",
                   nodename="test", timestamp=0)
+    assert event.is_event()
     assert event.dump() == "E|0|test|example|CRITICAL|message"
 
     event = Event("example", "CRITICAL", "message", nodename="test")

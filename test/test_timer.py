@@ -3,8 +3,14 @@
 # vim:fenc=utf-8
 
 import time
+import drove.timer
 from drove.timer import Timer
 from nose.tools import raises
+
+
+def _mock_sleep(value):
+    if value != 1000:
+        raise ValueError(value)
 
 
 def _testing_fn(argument, d):
@@ -22,9 +28,11 @@ def test_timer_stop():
 def test_timer():
     """Testing Timer: basic behaviour"""
     d = {}
-    Timer(0.1, _testing_fn, "test", d).run()
+    x = Timer(0.1, _testing_fn, "test", d)
+    x.run()
     time.sleep(0.5)
     assert d["value"] == "test"
+    x.stop()
 
 
 def _testing_fn_raise():
@@ -45,3 +53,12 @@ def test_timer_except():
     x = Timer(0.1, _testing_fn_raise)
     x.running = True
     x._run()
+
+
+def test_timer_sleep():
+    """Testing Timer: internal sleep"""
+    x = Timer(0.1, lambda: None)
+    x.running = True
+    x.run()
+    x.stop()
+    Timer.wait(1, seconds=0.1)

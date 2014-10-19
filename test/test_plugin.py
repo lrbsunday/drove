@@ -9,6 +9,10 @@ from nose.tools import raises
 
 import drove.plugin
 
+class _Mock_tread(object):
+    def stop(self, *args, **kwargs):
+        pass
+
 
 class TestingPlugin(drove.plugin.Plugin):
     def read(self):
@@ -18,7 +22,8 @@ class TestingPlugin(drove.plugin.Plugin):
         assert channel.__class__.__name__ == "Channel"
 
     def start(self):
-        pass
+        self.read_thread = _Mock_tread()
+        self.write_thread = _Mock_tread()
 
 
 class TestingFailedPlugin(drove.plugin.Plugin):
@@ -70,6 +75,16 @@ def test_plugin_rw():
     x.setup(config)
     x._read()
     x._write()
+
+def test_plugin_stop():
+    """Testing Plugin: stop()"""
+    config = Config()
+    channel = Channel()
+    channel.subscribe("test")
+
+    x = TestingPlugin(config, channel)
+    x.setup(config)
+    x.stop()
 
 
 @raises(AssertionError)

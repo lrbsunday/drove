@@ -51,3 +51,9 @@ def test_config_error():
     """Testing Config: ConfigError"""
     c = Config(os.path.join(os.path.dirname(__file__), "config", "basic.yml"))
     c["included"]
+
+
+def test_config_default():
+    """Testing Config: get with default"""
+    c = Config()
+    assert c.get("none", "value") == "value"
