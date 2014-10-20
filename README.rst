@@ -32,7 +32,7 @@ and upgrade versions using `pip <https://pypi.python.org/pypi/pip>`_::
 
 You can use unstable versions at your risk using pip as well::
 
-   pip install -e git://github.com/ajdiaz/drove
+   pip install -e git://github.com/droveio/drove
 
 By the way: **drove** works better with python3, but 2.7 is also
 supported.
@@ -74,7 +74,7 @@ please us the usual github worflow:
 4. Merged!
 
 If you don't have programming skills, just open a
-`issue <https://github.com/ajdiaz/drove/issues>`_ in the
+`issue <https://github.com/droveio/drove/issues>`_ in the
 Github project.
 
 
