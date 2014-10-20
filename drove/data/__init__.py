@@ -26,7 +26,8 @@ class Data(object):
                 raise ValueError("The Event has missing fields")
             kls = Importer("drove.data")
             timestamp, nodename, plugin, severity, message = fields[1:]
-            return kls("event", plugin, severity, message, nodename, timestamp)
+            return kls("event", plugin, int(severity),
+                       message, nodename, timestamp)
         else:
             raise ValueError("Unable to get data from dump")
 

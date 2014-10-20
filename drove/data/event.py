@@ -13,6 +13,20 @@ from ..util.network import getfqdn
 from . import Data
 
 
+class Severity(object):
+    """Model the severity of an event.
+
+    >>> Severity.OKAY == 0
+    >>> Severity.WARNING == 1
+    >>> Severity.CRITICAL == 2
+    >>> Severity.MISSING == 3
+    """
+    OKAY = 0
+    WARNING = 1
+    CRITICAL = 2
+    MISSING = 3
+
+
 class Event(Data):
     """Models an event for drove
 

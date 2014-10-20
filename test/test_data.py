@@ -14,7 +14,7 @@ class TestData(unittest.TestCase):
 
     def test_data_dump_event(self):
         """Testing Data: Event from_dump()"""
-        event = Data.from_dump("E|0|test|example|CRITICAL|message")
+        event = Data.from_dump("E|0|test|example|2|message")
         assert event.__class__.__name__ == "Event"
 
     def test_data_malformed_type(self):
