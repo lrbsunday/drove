@@ -5,6 +5,7 @@
 import time
 from drove.timer import Timer
 from nose.tools import raises
+from nose.tools import with_setup
 
 
 def _mock_sleep(value):
@@ -60,6 +61,17 @@ def _stop(x):
     return wrapper
 
 
+_sleep = time.sleep
+
+
+def _teardown():
+    time.sleep = _sleep
+
+def _fail(x):
+    raise ValueError()
+
+@raises(ValueError)
+@with_setup(teardown=_teardown)
 def test_timer_sleep():
     """Testing Timer: internal sleep"""
     x = Timer(0.1, lambda: None)
@@ -67,4 +79,5 @@ def test_timer_sleep():
     x.running = True
     x._run()
     x.stop()
-    Timer.wait(1, seconds=0.1)
+    time.sleep = _fail
+    Timer.wait(-1, seconds=0.1)
