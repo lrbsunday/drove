@@ -49,6 +49,11 @@ def cli():
     cmdopt.add_argument('-V', '--version', action='version',
                         version="%(prog)s " + drove.VERSION)
 
+    cmdopt.add_argument('-np', '--exit-if-no-plugins', action='store_true',
+                        dest="exit_if_no_plugins",
+                        help="if true drove exists if no plugins found",
+                        default=False)
+
     cmdopt.add_argument('-f', '--foreground', action='store_true',
                         dest="foreground",
                         help="No daemonize and run in foreground.",
@@ -116,6 +121,8 @@ def cli():
     if len(plugins) == 0:
         log.warning("No plugins installed... " +
                     "drove has no work to do.")
+        if args.exit_if_no_plugins:
+            sys.exit(0)
 
     def _exit_handler(*args, **kwargs):
         log.error("Received TERM signal. Try to exit gently...")
