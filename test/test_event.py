@@ -3,29 +3,31 @@
 # vim:fenc=utf-8
 
 import time
+import unittest
 from drove.data.event import Event
-from nose.tools import raises
 
 
-def test_event():
-    """Testing Event: dump()"""
-    event = Event("example", "CRITICAL", "message",
-                  nodename="test", timestamp=0)
-    assert event.is_event()
-    assert event.dump() == "E|0|test|example|CRITICAL|message"
+class TestEvent(unittest.TestCase):
 
-    event = Event("example", "CRITICAL", "message", nodename="test")
-    assert event.dump() == ("E|%d|test|example|CRITICAL|message" %
-                            (int(time.time()),))
+    def test_event(self):
+        """Testing Event: dump()"""
+        event = Event("example", "CRITICAL", "message",
+                      nodename="test", timestamp=0)
+        assert event.is_event()
+        assert event.dump() == "E|0|test|example|CRITICAL|message"
 
-
-def test_event_dump():
-    """Testing Event: from_dump()"""
-    event = Event.from_dump("E|0|test|example|CRITICAL|message")
-    assert event.dump() == "E|0|test|example|CRITICAL|message" == repr(event)
+        event = Event("example", "CRITICAL", "message", nodename="test")
+        assert event.dump() == ("E|%d|test|example|CRITICAL|message" %
+                                (int(time.time()),))
 
 
-@raises(ValueError)
-def test_event_malformed():
-    """Testing Event: malformed event"""
-    Event.from_dump("E|0")
+    def test_event_dump(self):
+        """Testing Event: from_dump()"""
+        event = Event.from_dump("E|0|test|example|CRITICAL|message")
+        assert event.dump() == "E|0|test|example|CRITICAL|message" == repr(event)
+
+
+    def test_event_malformed(self):
+        """Testing Event: malformed event"""
+        with self.assertRaises(ValueError):
+            Event.from_dump("E|0")

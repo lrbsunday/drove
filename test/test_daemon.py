@@ -3,27 +3,24 @@
 # vim:fenc=utf-8
 
 import os
-from nose.tools import raises
-from nose.tools import with_setup
+import unittest
 from drove.daemon import Daemon
 
-_os = os.name
 
+class TestDaemon(unittest.TestCase):
+    def setUp(self):
+        self._os = os.name
 
-def _teardown():
-    os.name = _os
+    def tearDown(self):
+        os.name = self._os
 
+    def test_daemon(self):
+        """Testing Daemon: invalid platform"""
+        os.name = 'foo'
+        with self.assertRaises(NotImplementedError):
+            Daemon.create(lambda: None)
 
-@with_setup(teardown=_teardown)
-@raises(NotImplementedError)
-def test_daemon():
-    """Testing Daemon: invalid platform"""
-    os.name = 'foo'
-    Daemon.create(lambda: None)
-
-
-@with_setup(teardown=_teardown)
-def test_daemon_posix():
-    """Testing Daemon: posix"""
-    os.name = 'posix'
-    Daemon.create(lambda: None)
+    def test_daemon_posix(self):
+        """Testing Daemon: posix"""
+        os.name = 'posix'
+        Daemon.create(lambda: None)

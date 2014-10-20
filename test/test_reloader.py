@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
+import unittest
+
 import drove.timer
 import drove.reloader
-from nose.tools import raises
-from nose.tools import with_setup
 
 
 class MockObject(object):
@@ -13,19 +13,19 @@ class MockObject(object):
         pass
 
 
-def test_reloader():
-    """Testing Reloader: basic behaviour"""
-    x = drove.reloader.Reloader([MockObject()])
-    x.reload()
+class TestReloader(unittest.TestCase):
+    def setUp(self):
+        self._Timer = drove.reloader.Timer
 
+    def tearDown(self):
+        drove.reloader.Timer = self._Timer
 
-_Timer = drove.reloader.Timer
-def _teardown():
-    drove.timer.Timer = _Timer
+    def test_reloader(self):
+        """Testing Reloader: basic behaviour"""
+        x = drove.reloader.Reloader([MockObject()])
+        x.reload()
 
-
-@with_setup(teardown=_teardown)
-def test_reloader_start():
-    """Testing Reloader: start()"""
-    x = drove.reloader.Reloader([MockObject()])
-    x.start()
+    def test_reloader_start(self):
+        """Testing Reloader: start()"""
+        x = drove.reloader.Reloader([MockObject()])
+        x.start()

@@ -3,30 +3,34 @@
 # vim:fenc=utf-8
 
 import os
+import unittest
 from drove.daemon import Daemon
-from nose.tools import with_setup
 
-if os.name == "posix":
 
-    _fork = os.fork
-    _kill = os.kill
+class TestDaemon(unittest.TestCase):
+    def setUp(self):
+        if os.name == "posix":
+            self._fork = os.fork
+            self._kill = os.kill
+        else:
+            self._fork = None
+            self._kill = None
 
-    def _tear_down():
-        os.fork = _fork
-        os.kill = _kill
+    def tearDown(self):
+        if self._fork:
+            os.fork = self._fork
+        if self._kill:
+            os.kill = self._kill
 
-    @with_setup(teardown=_tear_down)
-    def test_daemon_posix():
+    def test_daemon_posix(self):
         """Testing daemon.posix: parent behaviour"""
         d = Daemon.create(lambda: None, lambda: None)
         d.foreground()
         os.fork = lambda: 0
         d.start()
         d.restart()
-        os.fork = _fork
 
-    @with_setup(teardown=_tear_down)
-    def test_daemon_posix_child():
+    def test_daemon_posix_child(self):
         """Testing daemon.posix: child behaviour"""
         d = Daemon.create(lambda: None, lambda: None)
         os.fork = lambda: 100

@@ -9,10 +9,10 @@ python:
   - "pypy"
 # command to install dependencies
 install:
-  - pip install nose
+  - pip install green
   - pip install coverage
   - pip install coveralls
   - pip install .
 # command to run tests
-script: nosetests -v --with-coverage --cover-package=drove
+script: green -r
 after_success: coveralls

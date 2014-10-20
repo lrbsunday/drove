@@ -20,6 +20,49 @@ import drove.reloader
 from drove.util.network import getfqdn
 
 
+DEFAULT_CONFIG_FILES = ["~/.config/drove/drove.conf",
+                        "~/.drove/drove.conf",
+                        "/etc/drove/drove.conf",
+                        os.path.join(os.path.dirname(__file__), "config",
+                                     "drove.conf")]
+
+
+def _daemon(config, plugins, log, args):
+    try:
+        plugins.start_all()
+
+        # starting reload thread
+        log.debug("Starting reloader")
+        reloader = drove.reloader.Reloader([getfqdn, config] +
+                                           [x for x in plugins],
+                                           interval=config.get(
+                                               "reload",
+                                               60))
+        reloader.start()
+
+        # wait until all plugins stop
+        log.info("Entering data gathering loop")
+        plugins.loop()
+
+    except KeyboardInterrupt:
+        log.fatal("Received a Keyboard Interrupt. Exit silently.")
+        sys.exit(15)
+    except BaseException as e:
+        if args.verbose:
+            raise
+        log.fatal("Unexpected error happened during drove execution: " +
+                  "{message}".format(message=str(e)))
+        sys.exit(1)
+
+
+def _exit_handler(log, plugins):
+    if log:
+        log.error("Received TERM signal. Try to exit gently...")
+    if plugins:
+        plugins.stop_all()
+    sys.exit(15)
+
+
 def cli():
     """Base command line executable.
     """
@@ -66,26 +109,17 @@ def cli():
     if args.config_file:
         config = drove.config.Config(args.config_file)
     else:
-        cf = os.path.expanduser("~/.config/drove/drove.conf")
-        uf = os.path.expanduser("~/.drove/drove.conf")
-        gf = "/etc/drove/drove.conf"
-        dc = os.path.join(os.path.dirname(__file__), "config", "drove.conf")
-        if os.path.isfile(cf):
-            config = drove.config.Config(cf)
-        elif os.path.isfile(uf):
-            config = drove.config.Config(uf)
-        elif os.path.isfile(gf):
-            config = drove.config.Config(gf)
-        elif os.path.isfile(dc):
-            config = drove.config.Config(dc)
-        else:
-            config = drove.config.Config()
+        config = drove.config.Config()
+        for cf in DEFAULT_CONFIG_FILES:
+            cf = os.path.expanduser(cf)
+            if os.path.isfile(cf):
+                config = drove.config.Config(cf)
 
     if args.set:
         for config_val in args.set:
             if "=" not in config_val:
                 log.error("--set option require a 'key=value' value.")
-                continue
+                sys.exit(2)
             key, val = config_val.split("=", 1)
             config[key] = val
 
@@ -125,40 +159,10 @@ def cli():
         if args.exit_if_no_plugins:
             sys.exit(0)
 
-    def _exit_handler(*args, **kwargs):
-        log.error("Received TERM signal. Try to exit gently...")
-        plugins.stop_all()
-        sys.exit(15)
-
-    def _daemon():
-        try:
-            plugins.start_all()
-
-            # starting reload thread
-            log.debug("Starting reloader")
-            reloader = drove.reloader.Reloader([getfqdn, config] +
-                                               [x for x in plugins],
-                                               interval=config.get(
-                                                   "reload",
-                                                   60))
-            reloader.start()
-
-            # wait until all plugins stop
-            log.info("Entering data gathering loop")
-            plugins.loop()
-
-        except KeyboardInterrupt:
-            log.fatal("Received a Keyboard Interrupt. Exit silently.")
-            sys.exit(15)
-        except BaseException as e:
-            if args.verbose:
-                raise
-            log.fatal("Unexpected error happened during drove execution: " +
-                      "{message}".format(message=str(e)))
-            sys.exit(1)
-
     # setup daemon, but not necessary run in background
-    daemon = drove.daemon.Daemon.create(_daemon, _exit_handler)  # handle TERM
+    daemon = drove.daemon.Daemon.create(
+        lambda: _daemon(config, plugins, log, args),
+        lambda x: _exit_handler(plugins, log))
     if args.foreground:
         # starting daemon in foreground if flag is preset
         daemon.foreground()
