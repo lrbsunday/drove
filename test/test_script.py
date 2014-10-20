@@ -25,11 +25,14 @@ def test_script():
     """Testing script: basic behaviour"""
     sys.exit = lambda x: None
     sys.argv = ["prog", "-h"]
-    drove.script.cli()
-    sys.argv = ["prog", "-s", "logconsole=true", "-np", "-v", "-C", "./test/config/empty.yml"]
-    os.path.dirname = lambda x: ""
+    pid = drove.script.cli()
+    os.kill(pid, 2)
+    sys.argv = ["prog", "-s", "logconsole=true",
+                "-np", "-v", "-C", "./test/config/empty.yml"]
     sys.argv = ["prog", "-np"]
-    drove.script.cli()
+    pid = drove.script.cli()
+    os.kill(pid, 2)
+
 
 @raises(ValueError)
 @with_setup(teardown=_teardown)
@@ -37,5 +40,5 @@ def test_script_bad_key():
     """Testing script: invalid set key"""
     sys.exit = lambda x: None
     sys.argv = ["prog", "-np", "-s", "key"]
-    drove.script.cli()
-
+    pid = drove.script.cli()
+    os.kill(pid, 2)
