@@ -60,6 +60,7 @@ def cli():
                         default=False)
 
     args = cmdopt.parse_args()
+    log = drove.log.getDefaultLogger()
 
     # read configuration and start reload timer.
     if args.config_file:
@@ -83,9 +84,8 @@ def cli():
     if args.set:
         for config_val in args.set:
             if "=" not in config_val:
-                sys.stderr.write("FATAL: --set option requires a " +
-                                 "'key=value' argument.\n")
-                sys.exit(2)
+                log.error("--set option require a 'key=value' value.")
+                continue
             key, val = config_val.split("=", 1)
             config[key] = val
 
