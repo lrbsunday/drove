@@ -164,4 +164,4 @@ def cli():
         daemon.foreground()
     else:
         # or start it as daemon
-        daemon.start()
+        return daemon.start()
