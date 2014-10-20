@@ -83,8 +83,9 @@ def cli():
     if args.set:
         for config_val in args.set:
             if "=" not in config_val:
-                raise ValueError("--set option requires a " +
-                                 "'key=value' argument.")
+                sys.stderr.write("FATAL: --set option requires a " +
+                                 "'key=value' argument.\n")
+                sys.exit(2)
             key, val = config_val.split("=", 1)
             config[key] = val
 
@@ -164,7 +165,3 @@ def cli():
     else:
         # or start it as daemon
         daemon.start()
-
-
-if __name__ == "__main__":
-    cli()
