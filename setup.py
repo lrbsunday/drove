@@ -24,7 +24,7 @@ setup(
     url=project.URL,
     packages=find_packages(),
     tests_require=["green==1.7.0"],
-    install_requires=["six>=1.8.0"],
+    install_requires=["six>=1.8.0", "wcfg>=1"],
     package_data={
         project.NAME: glob.glob('config/*') + glob.glob('config/plugins/*')
     },
