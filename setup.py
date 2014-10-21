@@ -23,7 +23,7 @@ setup(
     author_email=project.AUTHOR_EMAIL,
     url=project.URL,
     packages=find_packages(),
-    tests_require=["nose==1.3.3"],
+    tests_require=["green==1.7.0"],
     install_requires=["six>=1.8.0"],
     package_data={
         project.NAME: glob.glob('config/*') + glob.glob('config/plugins/*')
@@ -40,12 +40,11 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.1',
-        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.4',
         'Operating System :: OS Independent',
         'Programming Language :: Python'
     ],
 
-    test_suite="nose.collector",
+    test_suite="drove.test",
     include_package_data=True,
 )
