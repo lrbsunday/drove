@@ -42,7 +42,7 @@ class TestTimer(unittest.TestCase):
         x = Timer(0.2, lambda: None)
         x.run()
         x.stop()
-        x.wait(1, 0)
+        x.wait(2, 0)  # increase to count green thread
 
     def test_timer(self):
         """Testing Timer: basic behaviour"""

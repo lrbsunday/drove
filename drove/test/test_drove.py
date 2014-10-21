@@ -5,29 +5,29 @@
 import os
 import sys
 import unittest
-import drove.script
+import drove.drove as script
 
 
 class TestScript(unittest.TestCase):
 
     def setUp(self):
         self._fork = os.fork
-        self._reloader_start = drove.script.drove.reloader.Reloader.start
-        self._pluginmanager_loop = drove.script.drove.plugin.PluginManager.loop
+        self._reloader_start = script.drove.reloader.Reloader.start
+        self._pluginmanager_loop = script.drove.plugin.PluginManager.loop
         self._path = sys.path
 
     def tearDown(self):
         sys.argv = ["prog"]
         os.fork = self._fork
-        drove.script.drove.reloader.Reloader.start = self._reloader_start
-        drove.script.drove.plugin.PluginManager.loop = self._pluginmanager_loop
+        script.drove.reloader.Reloader.start = self._reloader_start
+        script.drove.plugin.PluginManager.loop = self._pluginmanager_loop
         sys.path = self._path
 
     def test_script_flags(self):
         """Testing script: main flags"""
         sys.argv = ["prog", "-np", "-v", "-f"]
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
 
@@ -35,18 +35,18 @@ class TestScript(unittest.TestCase):
         """Testing script: -C flag"""
         sys.argv = ["prog", "-np", "-f", "-C", "./test/config/empty.yml"]
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
 
     def test_script_config_default(self):
         """Testing script: default config"""
         sys.argv = ["prog", "-np", "-f"]
-        config = drove.script.DEFAULT_CONFIG_FILES
-        drove.script.DEFAULT_CONFIG_FILES = ["./test/config/empty.yml"]
+        config = script.DEFAULT_CONFIG_FILES
+        script.DEFAULT_CONFIG_FILES = ["./test/config/empty.yml"]
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
-        drove.script.DEFAULT_CONFIG_FILES = config
+            script.main()
+        script.DEFAULT_CONFIG_FILES = config
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
 
@@ -54,7 +54,7 @@ class TestScript(unittest.TestCase):
         """Testing script: -s flag with fine parameters"""
         sys.argv = ["prog", "-np", "-f", "-s key=value"]
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 0)
 
@@ -62,7 +62,7 @@ class TestScript(unittest.TestCase):
         """Testing script: -s flag with fine parameters"""
         sys.argv = ["prog", "-np", "-f", "-s key"]
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 2)
 
@@ -77,7 +77,7 @@ class TestScript(unittest.TestCase):
                 return
 
         with self.assertRaises(SystemExit) as cm:
-            drove.script._exit_handler(_Log(), _Plugins())
+            script._exit_handler(_Log(), _Plugins())
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 15)
 
@@ -85,17 +85,17 @@ class TestScript(unittest.TestCase):
         """Testing script: daemon"""
         sys.argv = ["prog"]
         os.fork = lambda: 0
-        drove.script.drove.reloader.Reloader.start = lambda x: None
-        drove.script.drove.plugin.PluginManager.loop = lambda x: None
-        drove.script.cli()
+        script.drove.reloader.Reloader.start = lambda x: None
+        script.drove.plugin.PluginManager.loop = lambda x: None
+        script.main()
 
     def test_script_daemon_foreground(self):
         """Testing script: daemon (-f)"""
         sys.argv = ["prog", "-f"]
         os.fork = lambda: 0
-        drove.script.drove.reloader.Reloader.start = lambda x: None
-        drove.script.drove.plugin.PluginManager.loop = lambda x: None
-        drove.script.cli()
+        script.drove.reloader.Reloader.start = lambda x: None
+        script.drove.plugin.PluginManager.loop = lambda x: None
+        script.main()
 
     def test_script_daemon_interrupt(self):
         """Testing script: daemon with KeyboardInterrupt"""
@@ -105,10 +105,10 @@ class TestScript(unittest.TestCase):
         def _interrupt(x):
             raise KeyboardInterrupt()
 
-        drove.script.drove.reloader.Reloader.start = lambda x: None
-        drove.script.drove.plugin.PluginManager.loop = _interrupt
+        script.drove.reloader.Reloader.start = lambda x: None
+        script.drove.plugin.PluginManager.loop = _interrupt
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 15)
 
@@ -120,10 +120,10 @@ class TestScript(unittest.TestCase):
         def _interrupt(x):
             raise Exception()
 
-        drove.script.drove.reloader.Reloader.start = lambda x: None
-        drove.script.drove.plugin.PluginManager.loop = _interrupt
+        script.drove.reloader.Reloader.start = lambda x: None
+        script.drove.plugin.PluginManager.loop = _interrupt
         with self.assertRaises(SystemExit) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 1)
 
@@ -135,16 +135,16 @@ class TestScript(unittest.TestCase):
         def _interrupt(x):
             raise Exception()
 
-        drove.script.drove.reloader.Reloader.start = lambda x: None
-        drove.script.drove.plugin.PluginManager.loop = _interrupt
+        script.drove.reloader.Reloader.start = lambda x: None
+        script.drove.plugin.PluginManager.loop = _interrupt
         with self.assertRaises(Exception):
-            drove.script.cli()
+            script.main()
 
     def test_script_setproctitle(self):
         """Testing script: setproctitle"""
         sys.argv = ["prog", "-v", "-np", "-f"]
         sys.path.insert(0, os.path.dirname(__file__))
         with self.assertRaises(ValueError) as cm:
-            drove.script.cli()
+            script.main()
         the_exception = cm.exception
         self.assertEqual(str(the_exception), "test ok")

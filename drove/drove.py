@@ -63,7 +63,7 @@ def _exit_handler(log, plugins):
     sys.exit(15)
 
 
-def cli():
+def main():
     """Base command line executable.
     """
 

@@ -31,7 +31,7 @@ setup(
     license=project.LICENSE,
     entry_points={
         'console_scripts': [
-            '%s = %s.script:cli' % (project.NAME, project.NAME,),
+            '%s = %s.drove:main' % (project.NAME, project.NAME,),
         ]
     },
     classifiers=[
