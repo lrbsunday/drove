@@ -7,56 +7,8 @@ create python dictionary based class to handle it.
 """
 
 import os
+import wcfg
 import glob
-
-
-class YamlConfigParser(object):
-    def __init__(self, filename):
-        """Tiny Yaml parser which actually does not parse Yaml,
-        but config file for drove.
-
-        Example of usage:
-
-        >>> x = YamlConfigParser('somefile.yml')
-        >>> x()
-
-        :type filename: str
-        :param filename: the file name (path) to file to read.
-        """
-        self.filename = filename
-
-    @property
-    def contents(self):
-        """Contains the dictionary with values parsed in file."""
-        ret = {}
-        last_key = None
-        with open(self.filename, 'r') as f:
-            for line in f:
-                if line.startswith('#'):
-                    continue
-                else:
-                    if ":" not in line and (line[0] == '\t' or line[0] == ' '):
-                        if last_key is not None:
-                            ret[last_key] += (" " + line.strip())
-                    else:
-                        if ":" not in line:
-                            continue
-                        key, value = [x.strip() for x in line.split(":", 1)]
-                        last_key = key
-
-                        if value.isdigit():
-                            ret[key] = int(value)
-                        else:
-                            if value.lower() == 'true':
-                                ret[key] = True
-                            elif value.lower() == 'false':
-                                ret[key] = False
-                            else:
-                                try:
-                                    ret[key] = float(value)
-                                except ValueError:
-                                    ret[key] = value
-        return ret
 
 
 class ConfigError(Exception):
@@ -88,14 +40,19 @@ class Config(dict):
             file. If not use the config defined in constructor.
         """
         config_file = config_file or self.config_file
-        contents = YamlConfigParser(config_file).contents
+        with open(config_file, 'rb') as f:
+            contents = wcfg.load(f)
+
         self.update(contents)
+
         if "include" in contents:
             if contents["include"][0] != '/':
-                contents["include"] = os.path.join(
+                include = os.path.join(
                     os.path.dirname(config_file), contents["include"]
                 )
-            for f in glob.glob(contents["include"]):
+            else:
+                include = contents["include"]
+            for f in glob.glob(include):
                 self.reload(f)
 
     def get(self, key, default=CONFIG_UNSET):

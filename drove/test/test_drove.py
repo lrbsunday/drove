@@ -33,7 +33,9 @@ class TestScript(unittest.TestCase):
 
     def test_script_config(self):
         """Testing script: -C flag"""
-        sys.argv = ["prog", "-np", "-f", "-C", "./test/config/empty.yml"]
+        config_file = os.path.join(os.path.dirname(__file__),
+                                   "config", "empty.conf")
+        sys.argv = ["prog", "-np", "-f", "-C", config_file]
         with self.assertRaises(SystemExit) as cm:
             script.main()
         the_exception = cm.exception
@@ -43,7 +45,9 @@ class TestScript(unittest.TestCase):
         """Testing script: default config"""
         sys.argv = ["prog", "-np", "-f"]
         config = script.DEFAULT_CONFIG_FILES
-        script.DEFAULT_CONFIG_FILES = ["./test/config/empty.yml"]
+        config_file = os.path.join(os.path.dirname(__file__),
+                                   "config", "empty.conf")
+        script.DEFAULT_CONFIG_FILES = [config_file]
         with self.assertRaises(SystemExit) as cm:
             script.main()
         script.DEFAULT_CONFIG_FILES = config
