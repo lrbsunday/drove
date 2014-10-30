@@ -57,14 +57,24 @@ class TestingStartPlugin(drove.plugin.Plugin):
 
 class TestPlugin(unittest.TestCase):
     def test_plugin_load(self):
-        """Testing Plugin: load()"""
+        """testing plugin: load()"""
         config = Config()
         path = os.path.join(os.path.dirname(__file__), "plugin")
-        config["plugin_dir"] = path
+        config["plugin_dir"] = [path]
         channel = Channel()
         channel.subscribe("test")
-        x = drove.plugin.Plugin.load("cpu", config, channel)
+        x = drove.plugin.Plugin.load("sample.cpu", config, channel)
         assert x.__class__.__name__ == "CpuPlugin"
+
+    def test_plugin_load_failed(self):
+        """testing plugin: load() (failed)"""
+        config = Config()
+        path = os.path.join(os.path.dirname(__file__), "plugin")
+        config["plugin_dir"] = [path]
+        channel = Channel()
+        channel.subscribe("test")
+        with self.assertRaises(ImportError):
+            drove.plugin.Plugin.load("sample.bad", config, channel)
 
     def test_plugin_rw(self):
         """Testing Plugin: read() and write()"""
@@ -117,8 +127,8 @@ class TestPlugin(unittest.TestCase):
         config["read_interval"] = 0
         config["write_interval"] = 0
         path = os.path.join(os.path.dirname(__file__), "plugin")
-        config["plugin_dir"] = path
-        config["plugin.cpu"] = True
+        config["plugin_dir"] = [path]
+        config["plugin.sample.cpu"] = True
         channel.subscribe("test")
 
         x = drove.plugin.PluginManager(config, channel)

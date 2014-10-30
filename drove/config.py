@@ -81,7 +81,7 @@ class Config(dict):
             raise ConfigError("Required config parameter " +
                               "'%s' not found" % (key,))
 
-    def get_childs(self, prefix):
+    def get_childs(self, prefix, expand_childs=False):
         """Get the keys which hirarchically depends of prefix
         passed by argument.
 
@@ -93,13 +93,16 @@ class Config(dict):
 
         :type prefix: str
         :param prefix: a string to search keys under that prefix.
+        :type expand_childs: bool
+        :param expand_childs: if true each grandchilds should be threated
+            as childs.
         """
         prefix = prefix if prefix[-1] == "." else (prefix + ".")
         childs = set()
         for key in self:
             if key.startswith(prefix):
                 suffix = key.replace(prefix, "")
-                if "." in suffix:
+                if "." in suffix and not expand_childs:
                     childs.add(suffix.split(".")[0])
                 else:
                     childs.add(suffix)

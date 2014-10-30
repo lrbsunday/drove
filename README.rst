@@ -57,7 +57,7 @@ By default **drove** start with a very basic readers configured.
 
 To start the daemon just type::
 
-    drove -c myconfig.conf
+    drove -c myconfig.conf daemon
 
 You can avoid to daemonize with ``--no-daemon`` option in the
 command line.

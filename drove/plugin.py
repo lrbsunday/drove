@@ -5,6 +5,7 @@
 """This module provide a generic plugin implementation.
 """
 
+import os
 from .timer import Timer
 from .log import getLogger
 from .importer import Importer
@@ -56,9 +57,24 @@ class Plugin(object):
         :type channel: :class:`Channel`
         :param channel: a channel to intercommunicate the plugin with others.
         """
-        plugin_dir = config.get("plugin_dir", "/usr/lib/drove").split(",")
-        PluginClass = Importer(class_suffix="Plugin", path=plugin_dir)
-        return PluginClass(plugin_name, config, channel)
+        plugin_dir = config.get("plugin_dir", ["/usr/lib/drove"])
+        for directory in plugin_dir:
+            try:
+                directory = os.path.expanduser(directory)
+                pdir = plugin_name.split(".")[-1]
+                PluginClass = Importer(class_suffix="Plugin",
+                                       class_name=pdir.title(),
+                                       path=[directory])
+                kls = PluginClass("%s.%s" % (plugin_name, pdir,),
+                                  config, channel)
+                getLogger().info("Load plugin: %s" % (plugin_name,))
+                return kls
+            except (ImportError, AttributeError) as e:
+                if isinstance(e, AttributeError):
+                    getLogger().error("Unable to load plugin '%s': %s" %
+                                      (plugin_name, str(e),))
+
+        raise ImportError("Plugin '%s' not found" % (plugin_name,))
 
     def emit(self, data):
         """Emit some data from reader.
@@ -131,7 +147,7 @@ class PluginManager(object):
         self.config = config
         self.channel = channel
         self.plugins = []
-        for plugin in self.config.get_childs("plugin"):
+        for plugin in self.config.get_childs("plugin", expand_childs=True):
             self.plugins.append(Plugin.load(plugin, self.config, self.channel))
 
     def start_all(self):

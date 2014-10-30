@@ -11,6 +11,7 @@ import sys
 class Importer(object):
     def __init__(self,
                  parent_module=None,
+                 class_name=None,
                  class_prefix='',
                  class_suffix='',
                  path=[]):
@@ -29,6 +30,9 @@ class Importer(object):
         :type parent_module: str
         :param parent_module: the parent module where other submodules
                               and classes lives.
+        :type class_name: str
+        :param class_name: the name of the class to load, if none use the
+            module name titletize to find a class.
         :type class_prefix: str
         :param class_prefix: the prefix for classes to load.
         :type class_suffix: str
@@ -39,6 +43,7 @@ class Importer(object):
         """
         self.path = path
         self.parent_module = parent_module
+        self.class_name = class_name
         self.class_prefix = class_prefix
         self.class_suffix = class_suffix
 
@@ -52,12 +57,17 @@ class Importer(object):
         else:
             full_path = "%s.%s" % (self.parent_module, name,)
 
+        if self.class_name:
+            class_name = self.class_name
+        else:
+            class_name = name.title()
+
         try:
             mod = __import__("%s" % (full_path,),
                              globals(),
                              locals(),
                              ["%s%s%s" % (self.class_prefix,
-                                          name.title(),
+                                          class_name,
                                           self.class_suffix)])
         finally:
             for p in self.path:
@@ -65,7 +75,7 @@ class Importer(object):
                     sys.path.remove(p)
 
         kls = getattr(mod, "%s%s%s" % (self.class_prefix,
-                                       name.title(),
+                                       class_name,
                                        self.class_suffix))
 
         obj = kls(*args, **kwargs)

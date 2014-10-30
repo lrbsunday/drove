@@ -9,15 +9,9 @@ import os
 import sys
 import argparse
 
-import drove
 import drove.log
-import drove.daemon
 import drove.config
-import drove.plugin
-import drove.channel
-import drove.reloader
-
-from drove.util.network import getfqdn
+from drove.command.generic import Command
 
 
 DEFAULT_CONFIG_FILES = ["~/.config/drove/drove.conf",
@@ -25,42 +19,6 @@ DEFAULT_CONFIG_FILES = ["~/.config/drove/drove.conf",
                         "/etc/drove/drove.conf",
                         os.path.join(os.path.dirname(__file__), "config",
                                      "drove.conf")]
-
-
-def _daemon(config, plugins, log, args):
-    try:
-        plugins.start_all()
-
-        # starting reload thread
-        log.debug("Starting reloader")
-        reloader = drove.reloader.Reloader([getfqdn, config] +
-                                           [x for x in plugins],
-                                           interval=config.get(
-                                               "reload",
-                                               60))
-        reloader.start()
-
-        # wait until all plugins stop
-        log.info("Entering data gathering loop")
-        plugins.loop()
-
-    except KeyboardInterrupt:
-        log.fatal("Received a Keyboard Interrupt. Exit silently.")
-        sys.exit(15)
-    except BaseException as e:
-        if args.verbose:
-            raise
-        log.fatal("Unexpected error happened during drove execution: " +
-                  "{message}".format(message=str(e)))
-        sys.exit(1)
-
-
-def _exit_handler(log, plugins):
-    if log:
-        log.error("Received TERM signal. Try to exit gently...")
-    if plugins:
-        plugins.stop_all()
-    sys.exit(15)
 
 
 def main():
@@ -89,20 +47,61 @@ def main():
                              "config file.",
                         default=[])
 
+    cmdopt.add_argument("-P", "--plugin-dir", action="append",
+                        dest="plugin_dir",
+                        help="set the plugin dir to search plugins",
+                        default=[])
+
     cmdopt.add_argument('-V', '--version', action='version',
                         version="%(prog)s " + drove.VERSION)
 
-    cmdopt.add_argument('-np', '--exit-if-no-plugins', action='store_true',
+    subparsers = cmdopt.add_subparsers(
+        title="action",
+        description="action to be executed by drop",)
+
+    search = subparsers.add_parser("search",
+                                   help="Search a plugin in repository")
+    search.set_defaults(which="search")
+    search.add_argument("plugin", help="plugin string to search for")
+
+    install = subparsers.add_parser("install",
+                                    help="Install a plugin from repository")
+    install.set_defaults(which="install")
+    install.add_argument("-g", "--global", action="store_true",
+                         dest="install_global",
+                         help="Install globally")
+    install.add_argument("plugin", help="plugin string to install")
+
+    remove = subparsers.add_parser("remove",
+                                   help="Remove an installed plugin")
+    remove.set_defaults(which="remove")
+    remove.add_argument("plugin", help="plugin string to remove")
+
+    list = subparsers.add_parser("list",
+                                 help="List installed plugins")
+    list.set_defaults(which="list")
+
+    daemon = subparsers.add_parser("daemon",
+                                   help="Start drove daemon")
+
+    daemon.set_defaults(which="daemon")
+
+    daemon.add_argument('-np', '--exit-if-no-plugins', action='store_true',
                         dest="exit_if_no_plugins",
                         help="if true drove exists if no plugins found",
                         default=False)
 
-    cmdopt.add_argument('-f', '--foreground', action='store_true',
+    daemon.add_argument('-f', '--foreground', action='store_true',
                         dest="foreground",
                         help="No daemonize and run in foreground.",
                         default=False)
 
     args = cmdopt.parse_args()
+
+    if not hasattr(args, "which"):
+        cmdopt.print_help()
+        sys.exit(2)
+
     log = drove.log.getDefaultLogger()
 
     # read configuration and start reload timer.
@@ -123,49 +122,20 @@ def main():
             key, val = config_val.split("=", 1)
             config[key] = val
 
-    # ensure that config has nodename or create nodename for this node
-    if config.get("nodename", None) is None:
-        config["nodename"] = getfqdn
-
-    # configure log, which is a singleton, no need to use parameters
-    # in log in any other places.
-    log = drove.log.getLogger(syslog=config.get("syslog", True),
-                              console=config.get("logconsole", False),
-                              logfile=config.get("logfile", None),
-                              logfile_size=config.get("logfile_size", 0),
-                              logfile_keep=config.get("logfile_keep", 0))
-    if args.verbose:
-        log.setLevel(drove.log.DEBUG)
+    if args.plugin_dir:
+        config["plugin_dir"] = args.plugin_dir
 
     try:
-        from setproctitle import setproctitle
-        setproctitle("drove %s" % " ".join(sys.argv[1:]))
-    except ImportError:
-        pass
-
-    log.info("Starting drove")
-
-    # create a common channel to communicate the plugins
-    log.debug("Creating channel")
-    channel = drove.channel.Channel()
-
-    # starting plugins
-    log.debug("Starting plugins")
-    plugins = drove.plugin.PluginManager(config, channel)
-
-    if len(plugins) == 0:
-        log.warning("No plugins installed... " +
-                    "drove has no work to do.")
-        if args.exit_if_no_plugins:
-            sys.exit(0)
-
-    # setup daemon, but not necessary run in background
-    daemon = drove.daemon.Daemon.create(
-        lambda: _daemon(config, plugins, log, args),
-        lambda x: _exit_handler(plugins, log))
-    if args.foreground:
-        # starting daemon in foreground if flag is preset
-        daemon.foreground()
-    else:
-        # or start it as daemon
-        return daemon.start()
+        Command.from_name(
+            name=args.which,
+            config=config,
+            args=args,
+            log=log
+        ).execute()
+    except SystemExit as e:
+        sys.exit(e)
+    except (Exception, BaseException) as e:
+        if args.verbose:
+            raise
+        log.error("Unexpected error: %s" % (str(e),))
+        sys.exit(128)
