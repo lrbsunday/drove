@@ -6,7 +6,7 @@
 specific drove client commands.
 """
 
-from ..importer import Importer
+from ..util import importer
 
 
 class CommandError(Exception):
@@ -21,5 +21,8 @@ class Command(object):
 
     @classmethod
     def from_name(cls, name, config, args, log):
-        kls = Importer("drove.command", class_suffix="Command")
-        return kls(name, config, args, log)
+        mod_name = ".%s" % (name,)
+        kls_name = "%sCommand" % (name.title(),)
+
+        kls = importer.load(mod_name, kls_name, anchor=__package__)
+        return kls(config, args, log)

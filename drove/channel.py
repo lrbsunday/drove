@@ -19,7 +19,6 @@ class Channel(object):
     >>> x.subscribe("topic1")
     >>> x.publish("value")
     >>> x.receive("topic1")
-    >>> print [msg for msg in x]
     """
 
     def __init__(self):

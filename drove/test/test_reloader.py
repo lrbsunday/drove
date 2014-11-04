@@ -3,8 +3,6 @@
 # vim:fenc=utf-8
 
 import unittest
-
-import drove.timer
 import drove.reloader
 
 

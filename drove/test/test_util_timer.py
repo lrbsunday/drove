@@ -4,7 +4,7 @@
 
 import time
 import unittest
-from drove.timer import Timer
+from drove.util.timer import Timer
 
 
 def _mock_sleep(value):

@@ -2,7 +2,6 @@
 
 import drove as project
 
-import glob
 from setuptools import setup
 from setuptools import find_packages
 
@@ -25,13 +24,10 @@ setup(
     packages=find_packages(),
     tests_require=["green==1.7.0"],
     install_requires=["six>=1.8.0", "wcfg>=2"],
-    package_data={
-        project.NAME: glob.glob('config/*') + glob.glob('config/plugins/*')
-    },
     license=project.LICENSE,
     entry_points={
         'console_scripts': [
-            '%s = %s.drove:main' % (project.NAME, project.NAME,),
+            '%s = %s.script:main' % (project.NAME, project.NAME,),
         ]
     },
     classifiers=[

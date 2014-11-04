@@ -5,15 +5,14 @@
 import sys
 from .generic import Command
 
-import drove
-import drove.log
-import drove.daemon
-import drove.config
-import drove.plugin
-import drove.channel
-import drove.reloader
+from .. import VERSION
+from ..util import log
+from ..daemon import Daemon
+from ..channel import Channel
+from ..reloader import Reloader
+from ..plugin import PluginManager
 
-from drove.util.network import getfqdn
+from ..util.network import getfqdn
 
 
 class DaemonCommand(Command):
@@ -31,11 +30,9 @@ class DaemonCommand(Command):
 
             # starting reload thread
             self.log.debug("Starting reloader")
-            reloader = drove.reloader.Reloader([getfqdn, self.config] +
-                                               [x for x in self.plugins],
-                                               interval=self.config.get(
-                                                   "reload",
-                                                   60))
+            reloader = Reloader([getfqdn, self.config] +
+                                [x for x in self.plugins],
+                                interval=self.config.get("reload", 60))
             reloader.start()
 
             # wait until all plugins stop
@@ -59,7 +56,7 @@ class DaemonCommand(Command):
 
         # configure log, which is a singleton, no need to use parameters
         # in self.log in any other places.
-        self.log = drove.log.getLogger(
+        self.log = log.getLogger(
             syslog=self.config.get("syslog", True),
             console=self.config.get("logconsole", False),
             logfile=self.config.get("logfile", None),
@@ -67,7 +64,7 @@ class DaemonCommand(Command):
             logfile_keep=self.config.get("logfile_keep", 0))
 
         if self.args.verbose:
-            self.log.setLevel(drove.log.DEBUG)
+            self.log.setLevel(log.DEBUG)
 
         try:
             from setproctitle import setproctitle
@@ -75,15 +72,17 @@ class DaemonCommand(Command):
         except ImportError:
             pass
 
-        self.log.info("Starting drove")
+        self.log.info("Starting drove daemon (%s)" % (VERSION,))
+        self.log.info("Using configuration file: %s" %
+                      (self.config.config_file,))
 
         # create a common channel to communicate the plugins
         self.log.debug("Creating channel")
-        channel = drove.channel.Channel()
+        channel = Channel()
 
         # starting plugins
         self.log.debug("Starting plugins")
-        self.plugins = drove.plugin.PluginManager(self.config, channel)
+        self.plugins = PluginManager(self.config, channel)
 
         if len(self.plugins) == 0:
             self.log.warning("No plugins installed... " +
@@ -92,7 +91,7 @@ class DaemonCommand(Command):
                 sys.exit(0)
 
         # setup daemon, but not necessary run in background
-        daemon = drove.daemon.Daemon.create(
+        daemon = Daemon.create(
             self._daemon,
             self._exit_handler)
         if self.args.foreground:

@@ -16,6 +16,8 @@ class _Mock_tread(object):
 
 
 class TestingPlugin(drove.plugin.Plugin):
+    plugin_name = "test"
+
     def read(self):
         self.emit(None)
 
@@ -28,8 +30,7 @@ class TestingPlugin(drove.plugin.Plugin):
 
 
 class TestingFailedPlugin(drove.plugin.Plugin):
-    importer_name = "testing"
-    count = 0
+    plugin_name = "test"
 
     def read(self):
         raise Exception
@@ -38,14 +39,11 @@ class TestingFailedPlugin(drove.plugin.Plugin):
         raise Exception
 
     def _mock_log(self, *args, **kwargs):
-        if self.count == 1:
-            raise AssertionError
-        else:
-            self.count = 1
+        raise AssertionError
 
 
 class TestingStartPlugin(drove.plugin.Plugin):
-    importer_name = "testing"
+    plugin_name = "test"
     value = []
 
     def read(self):
@@ -73,7 +71,7 @@ class TestPlugin(unittest.TestCase):
         config["plugin_dir"] = [path]
         channel = Channel()
         channel.subscribe("test")
-        with self.assertRaises(ImportError):
+        with self.assertRaises(AttributeError):
             drove.plugin.Plugin.load("sample.bad", config, channel)
 
     def test_plugin_rw(self):
@@ -91,11 +89,25 @@ class TestPlugin(unittest.TestCase):
         """Testing Plugin: stop()"""
         config = Config()
         channel = Channel()
-        channel.subscribe("test")
 
         x = TestingPlugin(config, channel)
         x.setup(config)
         x.stop()
+
+    def test_plugin_failed(self):
+        """Testing Plugin: failing"""
+        config = Config()
+        channel = Channel()
+
+        x = TestingFailedPlugin(config, channel)
+        x.setup(config)
+        x.log.error = x._mock_log
+
+        with self.assertRaises(AssertionError):
+            x._read()
+
+        with self.assertRaises(AssertionError):
+            x._write()
 
     def test_plugin_start(self):
         """Testing Plugin: start() with handlers"""
@@ -138,16 +150,3 @@ class TestPlugin(unittest.TestCase):
         assert len(x) == 1
         assert len([i for i in x]) == 1
         x.stop_all()
-
-    def test_plugin_rw_ex(self):
-        """Testing Plugin: read() and write() exception"""
-
-        config = Config()
-        channel = Channel()
-        channel.subscribe("test")
-
-        with self.assertRaises(AssertionError):
-            x = TestingFailedPlugin(config, channel)
-            x.log.error = x._mock_log
-            x._read()
-            x._write()

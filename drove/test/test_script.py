@@ -6,9 +6,10 @@ import os
 import sys
 import shutil
 import unittest
-import drove.drove as drove
+import drove.script as drove
 
 from drove.package import PackageError
+from drove.command.generic import Command
 from drove.command.generic import CommandError
 from drove.command.search import SearchCommand, urllib
 
@@ -20,7 +21,7 @@ class TestScript(unittest.TestCase):
         self._reloader_start = drove.drove.reloader.Reloader.start
         self._pluginmanager_loop = drove.drove.plugin.PluginManager.loop
         self._path = sys.path
-        self._from_name = drove.Command.from_name
+        self._from_name = Command.from_name
         self._print_help = drove.argparse.ArgumentParser.print_help
         self._print_item = SearchCommand.print_item
         self._urlopen = urllib.request.urlopen
@@ -32,7 +33,7 @@ class TestScript(unittest.TestCase):
         drove.drove.reloader.Reloader.start = self._reloader_start
         drove.drove.plugin.PluginManager.loop = self._pluginmanager_loop
         sys.path = self._path
-        drove.Command.from_name = self._from_name
+        Command.from_name = self._from_name
         drove.argparse.ArgumentParser.print_help = self._print_help
         SearchCommand.print_item = self._print_item
         urllib.request.urlopen = self._urlopen
@@ -76,7 +77,7 @@ class TestScript(unittest.TestCase):
     def test_drove_main_except(self):
         """Testing drove: main catch exception"""
         sys.argv = ["prog", "daemon", "-f", "-np"]
-        drove.Command.from_name = self._mock_from_name
+        Command.from_name = self._mock_from_name
         with self.assertRaises(SystemExit) as cm:
             drove.main()
         the_exception = cm.exception

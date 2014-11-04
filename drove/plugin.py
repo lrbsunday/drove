@@ -6,9 +6,10 @@
 """
 
 import os
-from .timer import Timer
-from .log import getLogger
-from .importer import Importer
+import sys
+from .util.timer import Timer
+from .util.log import getLogger
+from .util import importer
 
 
 class PluginError(Exception):
@@ -57,24 +58,23 @@ class Plugin(object):
         :type channel: :class:`Channel`
         :param channel: a channel to intercommunicate the plugin with others.
         """
-        plugin_dir = config.get("plugin_dir", ["/usr/lib/drove"])
-        for directory in plugin_dir:
-            try:
-                directory = os.path.expanduser(directory)
-                pdir = plugin_name.split(".")[-1]
-                PluginClass = Importer(class_suffix="Plugin",
-                                       class_name=pdir.title(),
-                                       path=[directory])
-                kls = PluginClass("%s.%s" % (plugin_name, pdir,),
-                                  config, channel)
-                getLogger().info("Load plugin: %s" % (plugin_name,))
-                return kls
-            except (ImportError, AttributeError) as e:
-                if isinstance(e, AttributeError):
-                    getLogger().error("Unable to load plugin '%s': %s" %
-                                      (plugin_name, str(e),))
+        plugin_dir = [os.path.expanduser(x) for x in
+                      config.get("plugin_dir", ["/usr/lib/drove"])]
+        plugin_dir.append(os.path.join(os.path.dirname(__file__), "plugins"))
+        plugin_dir.extend(sys.path)
 
-        raise ImportError("Plugin '%s' not found" % (plugin_name,))
+        dir_name = plugin_name.split(".")[-1]
+        kls_name = "%sPlugin" % (dir_name.title(),)
+        mod_name = "%s.%s" % (plugin_name, dir_name,)
+
+        kls = importer.load(mod_name, kls_name, path=plugin_dir, anchor=None)
+
+        obj = kls(config, channel)
+        obj.plugin_name = mod_name
+        obj.log.info("Using plugin: %s" % (plugin_name,))
+        channel.subscribe(plugin_name)
+
+        return obj
 
     def emit(self, data):
         """Emit some data from reader.
@@ -89,14 +89,14 @@ class Plugin(object):
             self.read()
         except BaseException as e:
             self.log.error("Unexpected error reading from plugin '%s': %s'" %
-                           (self.importer_name, str(e)))
+                           (self.plugin_name, str(e)))
 
     def _write(self):
         try:
             self.write(self.__channel)
         except BaseException as e:
             self.log.error("Unexpected error writing plugin '%s': %s'" %
-                           (self.importer_name, str(e)))
+                           (self.plugin_name, str(e)))
 
     def setup(self, config):
         """Setup the plugin. This method could be override to
@@ -111,7 +111,7 @@ class Plugin(object):
     def start(self):
         """Start a plugin to read/write"""
         self.setup(self.__config)
-        config_prefix = "plugin.%s" % (self.importer_name,)
+        config_prefix = "plugin.%s" % (self.plugin_name,)
 
         if hasattr(self, "read"):
             # TODO check if callable
@@ -121,7 +121,7 @@ class Plugin(object):
             self.read_thread.run()
 
         if hasattr(self, "write"):
-            self.__channel.subscribe(self.importer_name)
+            self.__channel.subscribe(self.plugin_name)
             config_key = "%s.write_interval" % (config_prefix,)
             self.write_thread = Timer(self.__config.get(config_key, 60),
                                       self._write)
@@ -167,4 +167,14 @@ class PluginManager(object):
         return iter(self.plugins)
 
     def loop(self, num=0, seconds=10):
+        """Keep the process in a loop waiting for plugin data.
+
+        :type num: int
+        :param num: the number of plugins to wait for. By default 0 (wait
+            for all).
+
+        :type seconds: int
+        :param seconds: the time to sleep between two consecutives checks of
+            current active plugins. By default 10.
+        """
         Timer.wait(num, seconds)

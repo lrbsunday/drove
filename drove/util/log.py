@@ -13,7 +13,7 @@ from logging.handlers import SysLogHandler
 from logging.handlers import RotatingFileHandler
 
 
-LOG_FORMAT = "[%(asctime)s]   %(levelname)-5s   %(message)s"
+LOG_FORMAT = "[%(asctime)s]   %(levelname)-8s   %(message)s"
 
 logging.basicConfig(format=LOG_FORMAT,
                     level=logging.INFO,
@@ -37,29 +37,32 @@ LOGLEVELS = {
 
 def getDefaultLogger():
     """Get a default console logger"""
-    return logging.getLogger("drove.default")
+    return logging.getLogger("{}.default".format(__name__))
 
 
-class AppLogger(logging.getLoggerClass()):
+class Logger(logging.getLoggerClass()):
     """Create a modular logger for an application. Usually you don't want
-    to use this class directly, but use getLogger method instead.
+    to use this class directly, but use :func:`getLogger` method instead.
     """
     def __init__(self,
+                 name=__name__,
                  syslog=False,
                  console=False,
                  logfile=False,
                  logfile_size=0,
                  logfile_keep=0,
-                 loglevel="info"):
-        super(AppLogger, self).__init__("drove", LOGLEVELS.get(loglevel,
-                                                               logging.INFO))
+                 loglevel="info",
+                 encoded_priorities={"daemon": "alert"}):
+        super(Logger, self).__init__(name, LOGLEVELS.get(loglevel,
+                                                         logging.INFO))
 
         if syslog:
             if syslog is True:
                 syslog = self.get_syslog_socket()
 
             handler = SysLogHandler(address=syslog)
-            handler.encodePriority("daemon", "alert")
+            for k, v in encoded_priorities.items():
+                handler.encodePriority(k, v)
             handler.setFormatter(logging.Formatter(fmt=LOG_FORMAT))
             self.addHandler(handler)
 
@@ -78,6 +81,8 @@ class AppLogger(logging.getLoggerClass()):
         self.addHandler(NullHandler())
 
     def get_syslog_socket(self):
+        """Get the syslog local socket which depends of platform.
+        """
         platform = sys.platform
         if platform == "darwin":
             return "/var/run/syslog"
@@ -85,6 +90,7 @@ class AppLogger(logging.getLoggerClass()):
             return "/var/run/log"
         else:
             return "/dev/log"
+
 
 _logger = None
 
@@ -94,5 +100,5 @@ def getLogger(*args, **kwargs):
     caller class or thread."""
     global _logger
     if _logger is None:
-        _logger = AppLogger(*args, **kwargs)
+        _logger = Logger(*args, **kwargs)
     return _logger

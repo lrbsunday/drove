@@ -9,16 +9,18 @@ import os
 import sys
 import argparse
 
-import drove.log
 import drove.config
-from drove.command.generic import Command
+import drove.util.log
+import drove.command.generic
 
+
+DEFAULT_LOCAL_CONFIG = os.path.join(os.path.dirname(__file__),
+                                    "config", "drove.conf")
 
 DEFAULT_CONFIG_FILES = ["~/.config/drove/drove.conf",
                         "~/.drove/drove.conf",
                         "/etc/drove/drove.conf",
-                        os.path.join(os.path.dirname(__file__), "config",
-                                     "drove.conf")]
+                        DEFAULT_LOCAL_CONFIG]
 
 
 def main():
@@ -102,7 +104,7 @@ def main():
         cmdopt.print_help()
         sys.exit(2)
 
-    log = drove.log.getDefaultLogger()
+    log = drove.util.log.getDefaultLogger()
 
     # read configuration and start reload timer.
     if args.config_file:
@@ -126,7 +128,7 @@ def main():
         config["plugin_dir"] = args.plugin_dir
 
     try:
-        Command.from_name(
+        drove.command.generic.Command.from_name(
             name=args.which,
             config=config,
             args=args,

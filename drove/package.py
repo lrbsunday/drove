@@ -37,6 +37,15 @@ class Package(object):
         self.verbose = verbose
 
     def init_package(self, dir_path, version=None):
+        """Initialize a package in specified path. This function
+        create the ``__init__.py`` file or update it if exists.
+
+        :type dir_path: str
+        :param dir_path: The path to initialize as python package
+        :type version: str
+        :param version: The version of the package. If exists create
+            ``__version__`` variable into ``__init__.py`` file.
+        """
         if not os.path.exists(dir_path):
             os.mkdir(dir_path, mode=0o755)
         elif not os.path.isdir(dir_path):
@@ -49,6 +58,10 @@ class Package(object):
                 f.write("__version__ = %s\n" % (version,))
 
     def install_requirements(self, path):
+        """Resolve and install requirements. This function will read
+        the file ``requirements.txt`` from path passed as argument, and
+        then use pip to install them.
+        """
         requirements = os.path.join(path, "requirements.txt")
         if os.path.exists(requirements):
             try:
@@ -62,6 +75,9 @@ class Package(object):
             pip_main(verbose + ["install", "-r", requirements])
 
     def get_candidates(self, dir):
+        """Given a directory, find plugin candidates, which are
+        folders that match the expression *author*-*plugin*-*version*.
+        """
         candidates = glob.glob(os.path.join(dir, "*-*-*"))
         if len(candidates) == 0:
             raise PackageError("Package doesn't contains " +
@@ -72,6 +88,9 @@ class Package(object):
                 yield os.path.split(candidate.strip())[-1].split("-", 2)
 
     def is_installed(self, dir, author, plugin):
+        """Return true if the specified plugin of author is
+        installed in directory passed as first argument.
+        """
         path = os.path.join(dir, author, plugin)
         return os.path.isdir(path)
 
@@ -84,7 +103,6 @@ class Package(object):
         :type upgrade: bool
         :param upgrade: if true override installed package with new one
         """
-
         with temp.directory() as tmp_dir:
             with tarfile.open(self.tarball, "r:gz") as tarball:
                 tarball.extractall(path=tmp_dir)
