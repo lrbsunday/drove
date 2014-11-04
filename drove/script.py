@@ -102,10 +102,6 @@ def main():
 
     args = cmdopt.parse_args()
 
-#    if not hasattr(args, "which"):
-        #cmdopt.print_help()
-        #sys.exit(2)
-
     log = drove.util.log.getDefaultLogger()
 
     # read configuration and start reload timer.
