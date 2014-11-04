@@ -23,13 +23,15 @@ class InstallCommand(Command):
         else:
             self.plugin_dir = os.path.expanduser(plugin_dir[0])
 
-        if os.path.exists(self.args.plugin) and \
-           os.path.isfile(self.args.plugin):
-            if self.args.plugin.endswith(".tar.gz"):
+        plugin = self.args.plugin
+
+        if os.path.exists(plugin) and \
+           os.path.isfile(plugin):
+            if plugin.endswith(".tar.gz"):
                 # File exists and it's a tar.gz
                 self.log.info("Installing '%s' into '%s'" %
-                              (self.args.plugin, self.plugin_dir,))
+                              (plugin, self.plugin_dir,))
 
-                package = Package(self.args.plugin, self.args.verbose)
+                package = Package(plugin, self.args.verbose)
                 package.install(self.plugin_dir)
                 sys.exit(0)
