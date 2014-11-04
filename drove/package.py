@@ -47,7 +47,7 @@ class Package(object):
             ``__version__`` variable into ``__init__.py`` file.
         """
         if not os.path.exists(dir_path):
-            os.mkdir(dir_path, mode=0o755)
+            os.mkdir(dir_path, 0o755)
         elif not os.path.isdir(dir_path):
             raise PackageError("path '%s' is not a directory" % (dir_path,))
         if version is None:

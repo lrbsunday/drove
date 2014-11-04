@@ -59,7 +59,9 @@ def main():
 
     subparsers = cmdopt.add_subparsers(
         title="action",
-        description="action to be executed by drop",)
+        description="action to be executed by drop",
+        dest='which')
+    subparsers.required = True
 
     search = subparsers.add_parser("search",
                                    help="Search a plugin in repository")
@@ -100,9 +102,9 @@ def main():
 
     args = cmdopt.parse_args()
 
-    if not hasattr(args, "which"):
-        cmdopt.print_help()
-        sys.exit(2)
+#    if not hasattr(args, "which"):
+        #cmdopt.print_help()
+        #sys.exit(2)
 
     log = drove.util.log.getDefaultLogger()
 

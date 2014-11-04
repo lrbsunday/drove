@@ -12,6 +12,7 @@ from drove.package import PackageError
 from drove.command.generic import Command
 from drove.command.generic import CommandError
 from drove.command.search import SearchCommand, urllib
+import drove.command.daemon as daemon
 
 
 class TestScript(unittest.TestCase):
@@ -25,7 +26,6 @@ class TestScript(unittest.TestCase):
         self._print_help = drove.argparse.ArgumentParser.print_help
         self._print_item = SearchCommand.print_item
         self._urlopen = urllib.request.urlopen
-        self._write = sys.stdout.write
 
     def tearDown(self):
         sys.argv = ["prog"]
@@ -37,12 +37,11 @@ class TestScript(unittest.TestCase):
         drove.argparse.ArgumentParser.print_help = self._print_help
         SearchCommand.print_item = self._print_item
         urllib.request.urlopen = self._urlopen
-        sys.stdout.write = self._write
 
     def test_drove_noarg(self):
         """Testing drove: no args"""
         sys.argv = ["prog"]
-        drove.argparse.ArgumentParser.print_help = lambda x: None
+        #drove.argparse.ArgumentParser.print_help = lambda x: None
         with self.assertRaises(SystemExit) as cm:
             drove.main()
         the_exception = cm.exception
@@ -58,16 +57,14 @@ class TestScript(unittest.TestCase):
             info = error
             warning = error
 
-        class _mock(object):
+        class _mock(daemon.DaemonCommand):
             def __init__(self):
                 self.log = _log()
                 self.plugins = _plugins()
 
-        import drove.command.daemon as daemon
-        f = daemon.DaemonCommand._exit_handler
         obj = _mock()
         with self.assertRaises(SystemExit) as cm:
-            f(obj)
+            obj._exit_handler()
         the_exception = cm.exception
         self.assertEqual(the_exception.code, 15)
 
@@ -302,11 +299,14 @@ class TestScript(unittest.TestCase):
         """Testing drove: search"""
         class _mock(object):
             def read(self):
-                return bytes('{"results": [{"version": ' +
-                             '[{"download_url": "...", ' +
-                             '"id": "1.0"}], "description":' +
-                             '"test", "id": "test/test"}]}',
-                             'utf-8')
+                _x = ('{"results": [{"version": ' +
+                      '[{"download_url": "...", ' +
+                      '"id": "1.0"}], "description":' +
+                      '"test", "id": "test/test"}]}')
+                if sys.version >= '3':
+                    return bytes(_x, 'utf-8')
+                else:
+                    return bytes(_x)
 
             def close(self):
                 pass
@@ -319,7 +319,10 @@ class TestScript(unittest.TestCase):
         """Testing drove: search (malformed)"""
         class _mock(object):
             def read(self):
-                return bytes('{}', 'utf-8')
+                if sys.version >= '3':
+                    return bytes('{}', 'utf-8')
+                else:
+                    return bytes('{}')
 
             def close(self):
                 pass
@@ -333,7 +336,10 @@ class TestScript(unittest.TestCase):
         """Testing drove: search (none found)"""
         class _mock(object):
             def read(self):
-                return bytes('{"results": []}', 'utf-8')
+                if sys.version >= '3':
+                    return bytes('{"results": []}', 'utf-8')
+                else:
+                    return bytes('{"results": []}')
 
             def close(self):
                 pass
@@ -341,5 +347,3 @@ class TestScript(unittest.TestCase):
         sys.argv = ["prog", "search", "example"]
         urllib.request.urlopen = lambda x: _mock()
         drove.main()
-
-
