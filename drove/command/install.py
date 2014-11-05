@@ -4,10 +4,12 @@
 
 import os
 import sys
+from six.moves import urllib
 from .generic import Command
 from .generic import CommandError
 
 from ..package import Package
+from ..util import temp
 
 
 class InstallCommand(Command):
@@ -24,6 +26,19 @@ class InstallCommand(Command):
             self.plugin_dir = os.path.expanduser(plugin_dir[0])
 
         plugin = self.args.plugin
+
+        if plugin.startswith("https://") or \
+           plugin.startswith("http://"):
+            with temp.directory() as tmp_dir:
+                tmp_file = os.path.join(tmp_dir, "plugin.tar.gz")
+                with urllib.request.urlopen(plugin) as response:
+                    with open(tmp_file, 'wb') as out_file:
+                        data = response.read()
+                        out_file.write(data)
+
+                package = Package(tmp_file, self.args.verbose)
+                package.install(self.plugin_dir)
+            sys.exit(0)
 
         if os.path.exists(plugin) and \
            os.path.isfile(plugin):

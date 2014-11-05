@@ -18,6 +18,7 @@ import shutil
 import tarfile
 
 from .util import temp
+from .util import tester
 
 
 class PackageError(Exception):
@@ -54,8 +55,16 @@ class Package(object):
             open(os.path.join(dir_path, "__init__.py"), 'a').close()
         else:
             with open(os.path.join(dir_path, "__init__.py"), 'a') as f:
-                f.write("VERSION = %s\n" % (version,))
-                f.write("__version__ = %s\n" % (version,))
+                f.write("VERSION = '%s'\n" % (version,))
+                f.write("__version__ = '%s'\n" % (version,))
+
+    def run_tests(self, path):
+        """Run tests with uniitest if exists"""
+
+        for result in tester.run_tests(path):
+            if not result.wasSuccessful():
+                for fail in result.failures:
+                    raise PackageError("Test failure: %s" % (fail[1],))
 
     def install_requirements(self, path):
         """Resolve and install requirements. This function will read
@@ -85,7 +94,8 @@ class Package(object):
 
         for candidate in candidates:
             if os.path.isdir(candidate):
-                yield os.path.split(candidate.strip())[-1].split("-", 2)
+                items = os.path.split(candidate.strip())[-1].split("-")
+                yield items[0], "-".join(items[1:-1]), items[-1]
 
     def is_installed(self, dir, author, plugin):
         """Return true if the specified plugin of author is
@@ -121,6 +131,8 @@ class Package(object):
                         raise PackageError("Package '%s.%s' " %
                                            (author, plugin,) +
                                            "does not contain any plugin")
+
+                self.run_tests(plugin_path)
 
                 dest_dir = os.path.join(dir, author, plugin)
 
