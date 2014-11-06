@@ -5,14 +5,15 @@
 import sys
 import json
 import contextlib
-from .generic import Command
-from .generic import CommandError
+from . import Command
+from . import CommandError
 
 from six.moves import urllib
 
 
 class SearchCommand(Command):
-    def print_item(self, item, fd=None):
+    """Search plugins in online repository"""
+    def print_item(self, item):
         sys.stdout.write("%(id)-20s %(description)s\n" % item)
         sys.stdout.write("    %s\n" % (", ".join([x["id"]
                                        for x in item["version"]])))

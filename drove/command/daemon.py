@@ -3,15 +3,14 @@
 # vim:fenc=utf-8
 
 import sys
-from .generic import Command
 
+from . import Command
 from .. import VERSION
 from ..util import log
-from ..daemon import Daemon
 from ..channel import Channel
 from ..reloader import Reloader
 from ..plugin import PluginManager
-
+from ..util.daemon import Daemon
 from ..util.network import getfqdn
 
 

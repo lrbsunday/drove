@@ -23,7 +23,7 @@ setup(
     url=project.URL,
     packages=find_packages(),
     tests_require=["green==1.7.0"],
-    install_requires=["six>=1.8.0", "wcfg>=2"],
+    install_requires=["six>=1.8.0", "wcfg>=3"],
     license=project.LICENSE,
     entry_points={
         'console_scripts': [
@@ -41,6 +41,5 @@ setup(
         'Programming Language :: Python'
     ],
 
-    test_suite="drove.test",
     include_package_data=True,
 )

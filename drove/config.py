@@ -19,19 +19,42 @@ CONFIG_UNSET = (None,)
 
 
 class Config(dict):
-    """Parse a config file and create an object to get the paramters,
-    with the ability to reload the config online.
-
-    :param config_file: the main configuration file to load.
-        If not set you need to populate the config using the
-        :meth:`reload`
-    """
     def __init__(self, config_file=None):
+        """Parse a config file and create an object to get the paramters,
+        with the ability to reload the config online.
+
+        :param config_file: the main configuration file to load.
+            If not set you need to populate the config using the
+            :meth:`reload`
+        """
         self.config_file = config_file
-        self.config_mtime = 0
 
         if config_file is not None:
             self.reload()
+
+    def reloadfd(self, fd, path):
+        """Reload the config.
+
+        :type fd: file object
+        :param fd: A file descriptor to read config from. This function is
+            not designed to be call directly, but use :meth:`reload`
+            instead.
+        :type path: str
+        :param path: A path to search relative include files if any.
+        """
+        contents = wcfg.load(fd)
+
+        self.update(contents)
+
+        if "include" in self:
+            if self["include"][0] != '/':
+                include = os.path.join(
+                    path, self["include"]
+                )
+            else:
+                include = self["include"]
+            for f in glob.glob(include):
+                self.reload(f)
 
     def reload(self, config_file=None):
         """Reload the config.
@@ -41,19 +64,7 @@ class Config(dict):
         """
         config_file = config_file or self.config_file
         with open(config_file, 'rb') as f:
-            contents = wcfg.load(f)
-
-        self.update(contents)
-
-        if "include" in contents:
-            if contents["include"][0] != '/':
-                include = os.path.join(
-                    os.path.dirname(config_file), contents["include"]
-                )
-            else:
-                include = contents["include"]
-            for f in glob.glob(include):
-                self.reload(f)
+            self.reloadfd(f, os.path.dirname(config_file))
 
     def get(self, key, default=CONFIG_UNSET):
         """Return a value for a key in the config. If
@@ -62,7 +73,9 @@ class Config(dict):
         If default value is provided and key not found,
         the default value is returned.
 
+        :type key: str
         :param key: the key to search in config
+        :type default: *any object*
         :param default: the default value to return
             in case that key not found in config.
         """

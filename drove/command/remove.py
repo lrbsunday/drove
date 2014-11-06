@@ -2,38 +2,31 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
-import os
-import sys
-import shutil
-from .generic import Command
-from .generic import CommandError
+from . import Command
+from . import CommandError
+from ..package import Package
 
 
 class RemoveCommand(Command):
+    """Remove an installed plugin"""
     def execute(self):
-        plugin_dir = self.config.get("plugin_dir", None)
-        if not plugin_dir:
-            raise CommandError("Missing plugin_dir in configuration")
+        plugin = self.args.plugin
+        install_global = self.args.install_global
 
-        if "." not in self.args.plugin:
+        if "." not in plugin:
             raise CommandError("plugin must contain almost author.plugin")
 
-        author, plugin = self.args.plugin.split(".", 1)
+        plugin_dir = self.config.get("plugin_dir", None)
 
-        for directory in plugin_dir:
-            directory = os.path.expanduser(directory)
+        if not plugin_dir or len(plugin_dir) == 0:
+            raise CommandError("Missing plugin_dir in configuration")
 
-            candidate = os.path.join(directory, author, plugin)
-            if os.path.isdir(candidate):
-                self.log.info("Removing plugin '%s.%s'" %
-                              (author, plugin,))
-                shutil.rmtree(candidate, ignore_errors=True)
+        if install_global:
+            plugin_dir = plugin_dir[-1]
+        else:
+            plugin_dir = plugin_dir[0]
 
-            author_dir = os.path.join(directory, author)
+        author, plugin = plugin.split(".", 1)
 
-            if os.path.isdir(author_dir) and \
-               not [x for x in os.listdir(author_dir) if x[0] != "_"]:
-                self.log.info("Removing empty author folder '%s'" %
-                              (author,))
-                shutil.rmtree(author_dir)
-        sys.exit(0)
+        package = Package.from_installed(author, plugin, [plugin_dir])
+        package.remove()

@@ -58,9 +58,9 @@ class Plugin(object):
         :type channel: :class:`Channel`
         :param channel: a channel to intercommunicate the plugin with others.
         """
-        plugin_dir = [os.path.expanduser(x) for x in
-                      config.get("plugin_dir", ["/usr/lib/drove"])]
-        plugin_dir.append(os.path.join(os.path.dirname(__file__), "plugins"))
+        plugin_dir = [os.path.join(os.path.dirname(__file__), "plugins")]
+        plugin_dir.extend([os.path.expanduser(x) for x in
+                           config.get("plugin_dir", ["/usr/lib/drove"])])
         plugin_dir.extend(sys.path)
 
         dir_name = plugin_name.split(".")[-1]

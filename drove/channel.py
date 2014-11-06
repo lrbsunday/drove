@@ -11,17 +11,16 @@ from six.moves.queue import Queue
 
 
 class Channel(object):
-    """Models an internal and in-memory pubsub mechanism.
-    All plugins will subscrib to the channel, and they can receive
-    (get pending messages) and pubñish new ones.
-
-    >>> x = Channel()
-    >>> x.subscribe("topic1")
-    >>> x.publish("value")
-    >>> x.receive("topic1")
-    """
-
     def __init__(self):
+        """Models an internal and in-memory pubsub mechanism.
+        All plugins will subscrib to the channel, and they can receive
+        (get pending messages) and pubñish new ones.
+
+        >>> x = Channel()
+        >>> x.subscribe("topic1")
+        >>> x.publish("value")
+        >>> x.receive("topic1")
+        """
         self.queues = {}
 
     def subscribe(self, topic):

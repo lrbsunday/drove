@@ -9,9 +9,10 @@ import os
 import sys
 import argparse
 
-import drove.config
-import drove.util.log
-import drove.command.generic
+from .util import log
+from .config import Config
+from .command import Command
+from . import NAME, VERSION, DESCRIPTION
 
 
 DEFAULT_LOCAL_CONFIG = os.path.join(os.path.dirname(__file__),
@@ -28,8 +29,8 @@ def main():
     """
 
     cmdopt = argparse.ArgumentParser(
-        description="%s %s: %s" % (drove.NAME, drove.VERSION,
-                                   drove.DESCRIPTION,))
+        description="%s %s: %s" % (NAME, VERSION,
+                                   DESCRIPTION,))
 
     cmdopt.add_argument("-C", "--config-file", action="store",
                         dest="config_file",
@@ -55,22 +56,20 @@ def main():
                         default=[])
 
     cmdopt.add_argument('-V', '--version', action='version',
-                        version="%(prog)s " + drove.VERSION)
+                        version="%(prog)s " + VERSION)
 
     subparsers = cmdopt.add_subparsers(
         title="action",
         description="action to be executed by drop",
-        dest='which')
+        dest='cmd')
     subparsers.required = True
 
     search = subparsers.add_parser("search",
                                    help="Search a plugin in repository")
-    search.set_defaults(which="search")
     search.add_argument("plugin", help="plugin string to search for")
 
     install = subparsers.add_parser("install",
                                     help="Install a plugin from repository")
-    install.set_defaults(which="install")
     install.add_argument("-g", "--global", action="store_true",
                          dest="install_global",
                          help="Install globally")
@@ -78,17 +77,13 @@ def main():
 
     remove = subparsers.add_parser("remove",
                                    help="Remove an installed plugin")
-    remove.set_defaults(which="remove")
     remove.add_argument("plugin", help="plugin string to remove")
 
-    list = subparsers.add_parser("list",
-                                 help="List installed plugins")
-    list.set_defaults(which="list")
+    subparsers.add_parser("list",
+                          help="List installed plugins")
 
     daemon = subparsers.add_parser("daemon",
                                    help="Start drove daemon")
-
-    daemon.set_defaults(which="daemon")
 
     daemon.add_argument('-np', '--exit-if-no-plugins', action='store_true',
                         dest="exit_if_no_plugins",
@@ -102,22 +97,22 @@ def main():
 
     args = cmdopt.parse_args()
 
-    log = drove.util.log.getDefaultLogger()
+    logger = log.getDefaultLogger()
 
     # read configuration and start reload timer.
     if args.config_file:
-        config = drove.config.Config(args.config_file)
+        config = Config(args.config_file)
     else:
-        config = drove.config.Config()
+        config = Config()
         for cf in DEFAULT_CONFIG_FILES:
             cf = os.path.expanduser(cf)
             if os.path.isfile(cf):
-                config = drove.config.Config(cf)
+                config = Config(cf)
 
     if args.set:
         for config_val in args.set:
             if "=" not in config_val:
-                log.error("--set option require a 'key=value' value.")
+                logger.error("--set option require a 'key=value' value.")
                 sys.exit(2)
             key, val = config_val.split("=", 1)
             config[key] = val
@@ -126,16 +121,16 @@ def main():
         config["plugin_dir"] = args.plugin_dir
 
     try:
-        drove.command.generic.Command.from_name(
-            name=args.which,
+        Command.from_name(
+            name=args.cmd,
             config=config,
             args=args,
-            log=log
+            log=logger
         ).execute()
     except SystemExit as e:
         sys.exit(e)
     except (Exception, BaseException) as e:
         if args.verbose:
             raise
-        log.error("Unexpected error: %s" % (str(e),))
+        logger.error("Unexpected error: %s" % (str(e),))
         sys.exit(128)

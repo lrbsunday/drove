@@ -3,27 +3,23 @@
 # vim:fenc=utf-8
 
 import os
-import glob
-from .generic import Command
-from .generic import CommandError
+from . import Command
+from . import CommandError
 
 
 class ListCommand(Command):
+    """List installed plugins"""
     def execute(self):
         plugin_dir = self.config.get("plugin_dir", None)
         if not plugin_dir:
             raise CommandError("Missing plugin_dir in configuration")
         for dirname in plugin_dir:
-            for author_name in glob.glob(os.path.join(
-                os.path.expanduser(dirname), "*")
-            ):
-                author_sname = os.path.basename(author_name)
-                if author_sname[0] != "_" and os.path.isdir(author_name):
-                    for plugin_name in glob.glob(
-                        os.path.join(author_name, "*")
-                    ):
-                        plugin_sname = os.path.basename(plugin_name)
-                        if plugin_sname[0] != "_" and \
-                           os.path.isdir(plugin_name):
-                            self.log.info("%s.%s" % (author_sname,
-                                                     plugin_sname,))
+            for author_name in os.listdir(os.path.expanduser(dirname)):
+                author_dname = os.path.join(dirname, author_name)
+                if author_name[0] != "_" and os.path.isdir(author_dname):
+                    for plugin_name in os.listdir(author_dname):
+                        plugin_dname = os.path.join(author_dname, plugin_name)
+                        if plugin_name[0] != "_" and \
+                           os.path.isdir(plugin_dname):
+                            self.log.info("%s.%s" % (author_name,
+                                                     plugin_name,))
