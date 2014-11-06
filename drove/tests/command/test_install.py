@@ -28,7 +28,8 @@ class TestInstallCommand(unittest.TestCase):
         config["plugin_dir"] = ["none"]
 
         with temp.variables({
-            "drove.package.Package.from_tarball": lambda *a, **kw: self
+            "drove.package.Package.from_tarball":
+                staticmethod(lambda *a, **kw: self)
         }):
             cmd = InstallCommand(config, self, getLogger())
             assert cmd.__class__.__name__ == "InstallCommand"
@@ -71,7 +72,8 @@ class TestInstallCommand(unittest.TestCase):
         config["plugin_dir"] = ["none"]
 
         with temp.variables({
-            "drove.package.Package.from_url": lambda *a, **kw: self
+            "drove.package.Package.from_url":
+                staticmethod(lambda *a, **kw: self)
         }):
             cmd = InstallCommand(config, self, getLogger())
             assert cmd.__class__.__name__ == "InstallCommand"

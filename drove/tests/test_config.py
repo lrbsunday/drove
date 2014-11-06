@@ -12,7 +12,7 @@ from drove.config import Config, ConfigError
 class TestConfig(unittest.TestCase):
     def setUp(self):
         self.config_file = os.path.join(
-            os.path.dirname(config.__file__),
+            os.path.dirname(os.path.abspath(config.__file__)),
             "config",
             "drove.conf"
         )

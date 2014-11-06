@@ -15,7 +15,7 @@ def run_tests(path):
         if os.path.isdir(test_path):
             suite = unittest.TestSuite()
             suite.addTests(unittest.TestLoader().discover(test_path))
-            result = unittest.TestCase().defaultTestResult()
+            result = unittest.TestResult()
             suite.run(result)
             ret.append(result)
     return ret

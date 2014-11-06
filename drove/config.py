@@ -43,7 +43,6 @@ class Config(dict):
         :param path: A path to search relative include files if any.
         """
         contents = wcfg.load(fd)
-
         self.update(contents)
 
         if "include" in self:

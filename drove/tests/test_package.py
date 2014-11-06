@@ -70,6 +70,12 @@ AAB/yBeNo8qQACgAAA==
 
 
 class TestPackage(unittest.TestCase):
+    def setUp(self):
+        if not hasattr(BytesIO, "__exit__"):
+            BytesIO.__exit__ = lambda *a, **k: None
+        if not hasattr(BytesIO, "__enter__"):
+            BytesIO.__enter__ = lambda self, *a, **k: self
+
     def test_package_okay(self):
         with temp.directory() as dir:
             p = Package.from_tarballfd(
