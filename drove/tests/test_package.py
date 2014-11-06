@@ -138,11 +138,17 @@ class TestPackage(unittest.TestCase):
                 return self._mock_orig(*a, **kw)
 
         with temp.directory() as dir:
-            drove.package.__builtins__["open"] = _mock_open
+            if hasattr(drove.package.__builtins__, "open"):
+                drove.package.__builtins__.open = _mock_open
+            else:
+                drove.package.__builtins__["open"] = _mock_open
             try:
                 Package.from_tarball("mocked", [dir])
             finally:
-                drove.package.__builtins__["open"] = self._mock_orig
+                if hasattr(drove.package.__builtins__, "open"):
+                    drove.package.__builtins__.open = self._mock_orig
+                else:
+                    drove.package.__builtins__["open"] = self._mock_orig
 
     def test_package_url(self):
         with temp.directory() as dir:
