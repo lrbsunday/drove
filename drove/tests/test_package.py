@@ -124,7 +124,10 @@ class TestPackage(unittest.TestCase):
 
     def test_package_tarball(self):
         self._mock_flag = False
-        self._mock_orig = drove.package.__builtins__["open"]
+        if hasattr(drove.package.__builtins__, "open"):
+            self._mock_orig = drove.package.__builtins__.open
+        else:
+            self._mock_orig = drove.package.__builtins__["open"]
 
         # Weird hack to mock __builtins__ function to be compatible
         # between py27 and py3
