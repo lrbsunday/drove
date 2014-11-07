@@ -118,9 +118,12 @@ class TestPackage(unittest.TestCase):
                 )
 
     def test_package_nopip(self):
+        import pip
+        _pip = pip
         sys.modules["pip"] = os
         self.test_package_error(_test_package_okay)
         del sys.modules["pip"]
+        sys.modules["pip"] = _pip
 
     def test_package_tarball(self):
         self._mock_flag = False

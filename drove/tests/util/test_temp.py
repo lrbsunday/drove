@@ -19,8 +19,8 @@ class TestTemp(unittest.TestCase):
             assert sys.argv[0] == 'test_value'
         assert sys.argv[0] != 'test_value'
 
-        with temp.variables({"sys.stdout.flush": self._mock_flush}):
-            assert sys.stdout.flush == self._mock_flush
+        with temp.variables({"sys.stdout": self._mock_flush}):
+            assert sys.stdout == self._mock_flush
 
         with self.assertRaises(ValueError):
             with temp.variables({"fail": None}):

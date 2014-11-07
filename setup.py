@@ -22,7 +22,6 @@ setup(
     author_email=project.AUTHOR_EMAIL,
     url=project.URL,
     packages=find_packages(),
-    tests_require=["green==1.7.0"],
     install_requires=["six>=1.8.0", "wcfg>=3"],
     license=project.LICENSE,
     entry_points={
@@ -43,4 +42,5 @@ setup(
     ],
 
     include_package_data=True,
+    test_suite="drove.tests",
 )
