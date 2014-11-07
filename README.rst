@@ -1,21 +1,17 @@
 drove
 =====
 
-.. image:: https://travis-ci.org/droveio/drove.svg?branch=master
-    :target: https://travis-ci.org/droveio/drove
-    :alt: Build
+.. image:: https://img.shields.io/pypi/v/drove.svg?style=flat
+  :target: https://pypi.python.org/pypi/drove
+  :alt: Latest PyPI version:
 
-.. image:: https://pypip.in/download/drove/badge.svg
-    :target: https://pypi.python.org/pypi//drove/
-    :alt: Downloads
+.. image:: https://img.shields.io/travis/droveio/drove.svg?style=flat
+  :target: https://travis-ci.org/droveio/drove
+  :alt: Build Status
 
-.. image:: https://pypip.in/v/drove/badge.png
-    :target: https://pypi.python.org/pypi/drove/
-    :alt: Latest PyPI version
-
-.. image:: https://coveralls.io/repos/droveio/drove/badge.png?branch=master
-    :target: https://coveralls.io/r/droveio/drove?branch=master
-
+.. image:: https://img.shields.io/coveralls/droveio/drove.svg?style=flat
+  :target: https://coveralls.io/r/droveio/drove?branch=master
+  :alt: Coverage
 
 **drove** is a modern monitoring tool which support alerting
 (with escalation), auto-register nodes, statistics gathering
