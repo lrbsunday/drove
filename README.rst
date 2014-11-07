@@ -1,5 +1,7 @@
-drove
-=====
+|drovelogo| drove
+==================
+
+.. |drovelogo| image:: https://avatars0.githubusercontent.com/u/9040325?v=2&s=24
 
 .. image:: https://img.shields.io/pypi/v/drove.svg?style=flat
   :target: https://pypi.python.org/pypi/drove
