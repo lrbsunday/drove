@@ -8,8 +8,8 @@ events using ``DEBUG`` severity.
 
 from drove.plugin import Plugin
 
-print(__package__)
+
 class LogPlugin(Plugin):
     def write(self, channel):
-        for data in channel.receive(__package__):
+        for data in channel.receive("droveio.log"):
             self.log.debug(str(data))
