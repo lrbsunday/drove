@@ -13,7 +13,7 @@ drove
   :target: https://coveralls.io/r/droveio/drove?branch=master
   :alt: Coverage
 
-.. image:: http://img.shields.io/pypi/l/drove.svg?style=flat
+.. image:: http://img.shields.io/pypi/l/drove.svg-blue?style=flat
   :target: http://www.gnu.org/licenses/gpl-3.0.txt
   :alt: License GPLv3
 
