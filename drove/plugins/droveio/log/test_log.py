@@ -18,5 +18,5 @@ class TestLogPlugin(unittest.TestCase):
         channel.publish(Value("test", 0))
 
         kls = log.LogPlugin(config, channel)
+        kls.plugin_name = "droveio.log"
         kls.write(channel)
-
