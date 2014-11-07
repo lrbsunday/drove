@@ -13,6 +13,11 @@ drove
   :target: https://coveralls.io/r/droveio/drove?branch=master
   :alt: Coverage
 
+.. image:: http://img.shields.io/pypi/l/drove.svg
+  :target: http://www.gnu.org/licenses/gpl-3.0.txt
+  :alt: License GPLv3
+
+
 **drove** is a modern monitoring tool which support alerting
 (with escalation), auto-register nodes, statistics gathering
 and much more in a few lines of python code.
