@@ -3,7 +3,7 @@
 # vim:fenc=utf-8
 
 NAME = 'drove'
-VERSION = '0.1'
+VERSION = '0.2'
 DESCRIPTION = 'Monitoring and statistical analysis ' + \
               'system for a drove of systems'
 AUTHOR_NAME = 'Andrés J. Díaz'
