@@ -21,26 +21,34 @@ class Data(object):
 
         Formerly, the dump representation contains the following fields:
 
-        :Kind: Must be ``V`` for values or ``E`` for events.
-        :Nodename: Is the node name which generate the data.
-        :Plugin Namespace: The namespace where the data must be anchor to.
+        Kind
+            Must be ``V`` for values or ``E`` for events.
+        Nodename
+            Is the node name which generate the data.
+        Plugin Namespace
+            The namespace where the data must be anchor to.
 
         For value data, we have:
 
-        :Value: The numeric value of the metric.
-        :Value Type: The type of the metric. Can be ``g`` for gauge, ``c``
+        Value
+            The numeric value of the metric.
+        Value Type
+            The type of the metric. Can be ``g`` for gauge, ``c``
             for counter or ``t`` for time.
 
         For event data, we have:
 
-        :Severity: Is an integer which indicate the severity. Lower value
+        Severity
+            Is an integer which indicate the severity. Lower value
             implies lower severity.
-        :Message: Is a descriptive message of the event (human readable),
+        Message
+            Is a descriptive message of the event (human readable),
             encoded in UTF-8.
 
         For both, also have:
 
-        :Timestamp: An integer number which represents the UNIX timestamp
+        Timestamp
+            An integer number which represents the UNIX timestamp
             when the data was generated.
 
         """
