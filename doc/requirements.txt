@@ -1,2 +1,1 @@
-sphinx_drove_theme>=1
-drove>=0
+sphinx_drove_theme==1.2
