@@ -1,6 +1,11 @@
 drove.command
 =============
 
+.. automodule:: drove.command
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 drove.command.daemon
 ---------------------------
 
