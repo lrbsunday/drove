@@ -56,7 +56,7 @@ Then you can start your daemon in background
 Ok, now we have a drove daemon collecting CPU data, which is cool, but we
 need to do something with this data.
 
-.. note :: If you do not understand how drove works, please read Introduction_ section
+.. note :: If you do not understand how drove works, please read :doc:`index` section
   before continue.
 
 We can use in this example the influxdb plugin. Influxdb_ is a time series

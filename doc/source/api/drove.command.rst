@@ -45,9 +45,3 @@ drove.command.search
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-.. automodule:: drove.command
-    :members:
-    :undoc-members:
-    :show-inheritance:

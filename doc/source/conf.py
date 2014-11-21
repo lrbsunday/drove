@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'drove.io'
+project = 'drove'
 copyright = '2014, drove.io'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -132,7 +132,7 @@ html_theme_path = [sphinx_drove_theme.get_html_theme_path()]
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = "favicon.png"
+html_favicon = os.path.join("_static", "favicon.ico")
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

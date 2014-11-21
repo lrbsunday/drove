@@ -4,9 +4,11 @@
 
 """Generic linux daemon base class for python 3.x.
 
-*Most of this module is heavly based on the `work of Lone Wolves`_*
+.. note::
+    Most of this module is heavly based on the `work of Lone Wolves`_
 
-.. _`work of Lone Wolves`:: http://www.jejik.com/files/examples/daemon3x.py
+.. _`work of Lone Wolves`: http://www.jejik.com/files/examples/daemon3x.py
+
 """
 
 import sys
