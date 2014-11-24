@@ -20,7 +20,6 @@ works fine:
 .. code-block:: sh
 
   $ drove -v -s logconsole=true daemon -np -f
-  (drove) reineta master¹ doc % drove -v -s logconsole=true daemon -np -f
   [2014-11-17 15:18:29,916]   INFO       Starting drove daemon (0.2)
   [2014-11-17 15:18:29,917]   INFO       Using configuration file: /drove/config/drove.conf
   [2014-11-17 15:18:29,917]   DEBUG      Creating channel
