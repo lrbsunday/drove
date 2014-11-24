@@ -1,7 +1,12 @@
 drove.data
 ==========
 
-.. toctree::
+.. automodule:: drove.data
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+--------------------------------------
 
 drove.data.event
 ----------------
@@ -20,7 +25,3 @@ drove.data.value
     :show-inheritance:
 
 
-.. automodule:: drove.data
-    :members:
-    :undoc-members:
-    :show-inheritance:

@@ -5,6 +5,12 @@ drove.util
 
     drove.util.daemon
 
+.. automodule:: drove.util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-----------------------------------------
 
 drove.util.importer
 -------------------
@@ -63,7 +69,3 @@ drove.util.timer
     :show-inheritance:
 
 
-.. automodule:: drove.util
-    :members:
-    :undoc-members:
-    :show-inheritance:

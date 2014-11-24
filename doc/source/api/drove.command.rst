@@ -6,8 +6,11 @@ drove.command
     :undoc-members:
     :show-inheritance:
 
+
+-----------------------------------------
+
 drove.command.daemon
----------------------------
+--------------------
 
 .. automodule:: drove.command.daemon
     :members:
@@ -15,7 +18,7 @@ drove.command.daemon
     :show-inheritance:
 
 drove.command.install
-----------------------------
+---------------------
 
 .. automodule:: drove.command.install
     :members:
@@ -23,7 +26,7 @@ drove.command.install
     :show-inheritance:
 
 drove.command.list
--------------------------
+------------------
 
 .. automodule:: drove.command.list
     :members:
@@ -31,7 +34,7 @@ drove.command.list
     :show-inheritance:
 
 drove.command.remove
----------------------------
+--------------------
 
 .. automodule:: drove.command.remove
     :members:
@@ -39,9 +42,11 @@ drove.command.remove
     :show-inheritance:
 
 drove.command.search
----------------------------
+--------------------
 
 .. automodule:: drove.command.search
     :members:
     :undoc-members:
     :show-inheritance:
+
+

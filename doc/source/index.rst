@@ -25,7 +25,7 @@ and much more in a few lines of python code.
 There are a lot of features in **drove**, for example:
 
 * Easy to extend in python and other languages
-* Easy to install, only ``python>=2.7`` as dependency
+* Easy to install, works in ``python3`` and ``python2.7``
 * Lots of plugins in the community_
 * Compatible with nagios checks using `nagios plugin`_
 * Support smart alerting (escalation, collapsing, hysteresis etc.)

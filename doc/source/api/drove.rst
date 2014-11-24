@@ -1,15 +1,18 @@
-drove
-=====
-
-Ths is the main package which include a number of core modules. Each module
-documented here is part of the drove package, which include other subpackage
-that you can explore in the global TOC.
+drove package
+=============
 
 .. toctree::
 
     drove.command
     drove.data
     drove.util
+
+.. automodule:: drove
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+------------------------------------
 
 drove.channel
 -------------
@@ -55,12 +58,6 @@ drove.script
 ------------
 
 .. automodule:: drove.script
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-.. automodule:: drove
     :members:
     :undoc-members:
     :show-inheritance:

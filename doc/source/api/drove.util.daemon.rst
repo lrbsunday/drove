@@ -1,6 +1,12 @@
 drove.util.daemon
 =================
 
+.. automodule:: drove.util.daemon
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-----------------------------------------------
 
 drove.util.daemon.posix
 -----------------------
@@ -11,7 +17,3 @@ drove.util.daemon.posix
     :show-inheritance:
 
 
-.. automodule:: drove.util.daemon
-    :members:
-    :undoc-members:
-    :show-inheritance:
