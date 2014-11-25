@@ -6,9 +6,22 @@ import os
 from . import Command
 from . import CommandError
 
+"""This module implements the ``list`` command which can be invoked from
+the commandline.
+
+For more help, please run:
+
+.. code-block:: sh
+
+    $ drove list -h
+
+"""
+
 
 class ListCommand(Command):
-    """List installed plugins"""
+    """This class extends :class:`Command` and implement the ``list``
+    command used by drove client to list installed plugins.
+    """
     def execute(self):
         plugin_dir = self.config.get("plugin_dir", None)
         if not plugin_dir:

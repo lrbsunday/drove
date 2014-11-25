@@ -9,9 +9,22 @@ from . import CommandError
 
 from ..package import Package
 
+"""This module implements the ``install`` command which can be invoked from
+the commandline.
+
+For more help, please run:
+
+.. code-block:: sh
+
+    $ drove install -h
+
+"""
+
 
 class InstallCommand(Command):
-
+    """This class extends :class:`Command` and implement the ``install``
+    command used by drove client to install plugins.
+    """
     def execute(self):
         plugin_dir = self.config.get("plugin_dir", None)
         plugin = self.args.plugin

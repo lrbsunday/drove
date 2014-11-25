@@ -13,8 +13,21 @@ from ..plugin import PluginManager
 from ..util.daemon import Daemon
 from ..util.network import getfqdn
 
+"""This module contains the command ``daemon`` which is invoked from the
+command line to run drove as agent, running plugins in background.
+
+For more information run drove:
+
+.. code-block:: sh
+
+    $ drove daemon -h
+
+"""
+
 
 class DaemonCommand(Command):
+    """This class extends :class:`Command` to implement ``daemon`` command.
+    """
 
     def _exit_handler(self):
         if self.log:
@@ -49,6 +62,8 @@ class DaemonCommand(Command):
             sys.exit(1)
 
     def execute(self):
+        """When invoked run drove as daemon (usually in background)
+        """
         # ensure that config has nodename or create nodename for this node
         if self.config.get("nodename", None) is None:
             self.config["nodename"] = getfqdn
