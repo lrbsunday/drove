@@ -17,6 +17,8 @@ drove.command.daemon
     :undoc-members:
     :show-inheritance:
 
+-----------------------------------------
+
 drove.command.install
 ---------------------
 
@@ -24,6 +26,9 @@ drove.command.install
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+-----------------------------------------
 
 drove.command.list
 ------------------
@@ -33,6 +38,9 @@ drove.command.list
     :undoc-members:
     :show-inheritance:
 
+
+-----------------------------------------
+
 drove.command.remove
 --------------------
 
@@ -40,6 +48,8 @@ drove.command.remove
     :members:
     :undoc-members:
     :show-inheritance:
+
+-----------------------------------------
 
 drove.command.search
 --------------------

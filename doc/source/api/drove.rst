@@ -22,6 +22,8 @@ drove.channel
     :undoc-members:
     :show-inheritance:
 
+------------------------------------
+
 drove.config
 ------------
 
@@ -29,6 +31,8 @@ drove.config
     :members:
     :undoc-members:
     :show-inheritance:
+
+------------------------------------
 
 drove.package
 -------------
@@ -38,6 +42,8 @@ drove.package
     :undoc-members:
     :show-inheritance:
 
+------------------------------------
+
 drove.plugin
 ------------
 
@@ -46,6 +52,8 @@ drove.plugin
     :undoc-members:
     :show-inheritance:
 
+------------------------------------
+
 drove.reloader
 --------------
 
@@ -53,6 +61,8 @@ drove.reloader
     :members:
     :undoc-members:
     :show-inheritance:
+
+------------------------------------
 
 drove.script
 ------------

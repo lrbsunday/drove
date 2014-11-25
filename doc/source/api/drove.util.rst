@@ -20,6 +20,8 @@ drove.util.importer
     :undoc-members:
     :show-inheritance:
 
+-----------------------------------------
+
 drove.util.lexer
 ----------------
 
@@ -27,6 +29,8 @@ drove.util.lexer
     :members:
     :undoc-members:
     :show-inheritance:
+
+-----------------------------------------
 
 drove.util.log
 --------------
@@ -36,6 +40,8 @@ drove.util.log
     :undoc-members:
     :show-inheritance:
 
+-----------------------------------------
+
 drove.util.network
 ------------------
 
@@ -43,6 +49,8 @@ drove.util.network
     :members:
     :undoc-members:
     :show-inheritance:
+
+-----------------------------------------
 
 drove.util.temp
 ---------------
@@ -52,6 +60,8 @@ drove.util.temp
     :undoc-members:
     :show-inheritance:
 
+-----------------------------------------
+
 drove.util.tester
 -----------------
 
@@ -59,6 +69,8 @@ drove.util.tester
     :members:
     :undoc-members:
     :show-inheritance:
+
+-----------------------------------------
 
 drove.util.timer
 ----------------
