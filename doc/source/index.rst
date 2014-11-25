@@ -76,6 +76,20 @@ queues and save the data into InfluxDB_ database.
 If you want to know more about how **drove** works internally, please read
 the manual :doc:`internals`.
 
+Values and Events
+-----------------
+
+**drove** basically handles two types of data, the values
+(:class:`drove.data.value.Value`) and the events
+(:class:`drove.data.event.Event`). While the first are intended to represent
+a metric (i.e. a number with a label), the second ones are designed to send
+a unique event to the drove network (for example an alert).
+
+Each data which is managed by drove is one of this two kind. Usually plugins
+send values to monitor some interesting metric, and other plugins can send
+events according to these values. But of course there are no limitations
+about how send events or values.
+
 
 .. _community: https://plugins.drove.io
 .. _`nagios plugin`: https://plugins.drove.io/plugins/droveio/nagios
