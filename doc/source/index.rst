@@ -7,7 +7,6 @@
   installation
   usage
   plugins
-  internals
   reference
 
 .. image:: _static/drove-logo.svg
