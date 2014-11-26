@@ -72,9 +72,6 @@ system, then drove core store that data in internal queues. On the other
 hand we've the ``droveio.influxdb`` plugin, which read data from internal
 queues and save the data into InfluxDB_ database.
 
-If you want to know more about how **drove** works internally, please read
-the manual :doc:`internals`.
-
 Values and Events
 -----------------
 
