@@ -57,14 +57,18 @@ class Logger(logging.getLoggerClass()):
                                                          logging.INFO))
 
         if syslog:
-            if syslog is True:
-                syslog = self.get_syslog_socket()
+            if sys.platform in ('win32', 'cygwin'):
+                getDefaultLogger().warning("Current platform does " +
+                                           "not support syslog")
+            else:
+                if syslog is True:
+                    syslog = self.get_syslog_socket()
 
-            handler = SysLogHandler(address=syslog)
-            for k, v in encoded_priorities.items():
-                handler.encodePriority(k, v)
-            handler.setFormatter(logging.Formatter(fmt=LOG_FORMAT))
-            self.addHandler(handler)
+                handler = SysLogHandler(address=syslog)
+                for k, v in encoded_priorities.items():
+                    handler.encodePriority(k, v)
+                handler.setFormatter(logging.Formatter(fmt=LOG_FORMAT))
+                self.addHandler(handler)
 
         if logfile:
             handler = RotatingFileHandler(logfile,
