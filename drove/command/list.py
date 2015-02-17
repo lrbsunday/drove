@@ -3,8 +3,12 @@
 # vim:fenc=utf-8
 
 import os
+import glob
+
 from . import Command
 from . import CommandError
+
+from ..package import find_package
 
 """This module implements the ``list`` command which can be invoked from
 the commandline.
@@ -26,13 +30,7 @@ class ListCommand(Command):
         plugin_dir = self.config.get("plugin_dir", None)
         if not plugin_dir:
             raise CommandError("Missing plugin_dir in configuration")
-        for dirname in plugin_dir:
-            for author_name in os.listdir(os.path.expanduser(dirname)):
-                author_dname = os.path.join(dirname, author_name)
-                if author_name[0] != "_" and os.path.isdir(author_dname):
-                    for plugin_name in os.listdir(author_dname):
-                        plugin_dname = os.path.join(author_dname, plugin_name)
-                        if plugin_name[0] != "_" and \
-                           os.path.isdir(plugin_dname):
-                            self.log.info("%s.%s" % (author_name,
-                                                     plugin_name,))
+
+        for pkg in find_package(path=plugin_dir):
+            self.log.info(str(pkg))
+

@@ -29,6 +29,9 @@ class TestLog(unittest.TestCase):
 
         sys.platform = "unknown"
         assert log.get_syslog_socket() == "/dev/log"
+
+        sys.platform = "win32"
+        log = drove_log.Logger(syslog=True)
         del sys
 
     def test_log_getlogger(self):

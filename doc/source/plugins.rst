@@ -12,7 +12,7 @@ Installing plugins
 
 To install plugin you can use the drove client, just typing:
 
-.. code-block:: sh
+.. code-block:: bash
 
   $ drove install [plugin]
 
@@ -31,10 +31,11 @@ Where plugin could be one of the following values:
 Create new plugin
 -----------------
 
-Basically a plugin is a directory which contains a ``plugin`` folder (which
-must be a valid python package, i.e. has a ``__init__.py`` file), and
-a module with the name of the plugin. For example for plugin ``droveio.cpu``
-we created the file ``cpu.py`` (``droveio`` is the author of the plugin).
+The drove plugins are python modules with a specific packaging. To create
+new plugin you need to create first a python module with your plugin.
+
+For example for plugin ``droveio.cpu`` we created the file ``cpu.py`` inside
+folder ``droveio`` (``droveio`` is the author of the plugin).
 
 Inside this file you must have a class with the same name as the module, but
 in camel case notation and ``Plugin`` suffix. For our cpu example, must be
@@ -104,21 +105,30 @@ directories::
   ├── config                   [optional]
   │   └── plugin_name.conf     [optional]
   ├── plugin                   [mandatory]
-  │   ├── __init__.py          [mandatory]
-  │   └── plugin_name.py       [mandatory]
+  │    └── author              [mandatory]
+  │        ├── __init__.py     [mandatory]
+  │        └── plugin_name.py  [mandatory]
   ├── requirements.txt         [optional]
   └── tests                    [optional]
       └── test_plugin_cpu.py   [optional]
 
-In depth, you must contain the plugin in a *root dir*, this dir must have
-specific name::
 
-  <author>-<plugin>-<version>
+Inside the ``plugin`` directory you **MUST** have a directory with the name
+of the author, which include the module. Please note that you can use
+a package instead a module if your module contains a lot of files::
 
-Inside the directory you **MUST** have a ``plugin`` directory where you must
-include a ``__init__.py`` file to force python to recognize the directory as
-package, and a python file with the same name of the plugin. For example for
-plugin ``droveio.cpu``, the name of the file must be ``cpu.py``.
+  plugin
+  └── author
+      ├── plugin
+      │   ├── mycode.py
+      │   └── __init__.py
+      └── __init__.py
+
+Please note that you can only add one plugin per package (module or package,
+but just one).
+
+The author in package is just a string, has no special meaning, and is only
+use to create a properly namespace.
 
 For example, for the ``droveio.cpu`` plugin, this is the directory tree::
 
@@ -127,8 +137,9 @@ For example, for the ``droveio.cpu`` plugin, this is the directory tree::
   ├── config
   │   └── cpu.conf
   ├── plugin
-  │   ├── __init__.py
-  │   └── cpu.py
+  │   └── droveio
+  │       ├── __init__.py
+  │       └── cpu.py
   ├── requirements.txt
   └── tests
       └── test_plugin_cpu.py

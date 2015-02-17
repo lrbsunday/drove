@@ -66,6 +66,12 @@ def main():
 
     search = subparsers.add_parser("search",
                                    help="Search a plugin in repository")
+    search.add_argument("-i", "--index-url",
+                        action="store",
+                        help="set the base url to search plugins",
+                        dest="index_url",
+                        default=None)
+
     search.add_argument("plugin", help="plugin string to search for")
 
     install = subparsers.add_parser("install",
@@ -73,6 +79,18 @@ def main():
     install.add_argument("-g", "--global", action="store_true",
                          dest="install_global",
                          help="Install globally")
+
+
+    install.add_argument("-U", "--upgrade", action="store_true",
+                         dest="upgrade",
+                         help="Upgrade previous intalled plugin")
+
+    install.add_argument("-i", "--index-url",
+                        action="store",
+                        help="set the base url to search plugins",
+                        dest="index_url",
+                        default=None)
+
     install.add_argument("plugin", help="plugin string to install")
 
     remove = subparsers.add_parser("remove",

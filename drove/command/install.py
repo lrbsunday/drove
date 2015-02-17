@@ -29,6 +29,7 @@ class InstallCommand(Command):
         plugin_dir = self.config.get("plugin_dir", None)
         plugin = self.args.plugin
         upgrade = self.args.upgrade
+        index_url = self.args.index_url
         install_global = self.args.install_global
 
         if not plugin_dir:
@@ -41,15 +42,20 @@ class InstallCommand(Command):
 
         # If plugin string is an URL
         if plugin.split("://")[0] in ["http", "https", "ftp"]:
-            package = Package.from_url(plugin, [plugin_dir], upgrade)
+            package = Package.from_url(plugin, plugin_dir, upgrade)
         # If plugin string is file in the filesystem
         elif os.path.exists(plugin) and os.path.isfile(plugin):
             # If file is a tarball
             if plugin.endswith(".tar.gz"):
-                package = Package.from_tarball(plugin, [plugin_dir], upgrade)
+                package = Package.from_tarball(plugin, plugin_dir, upgrade)
             else:
                 raise CommandError("Provided package file is not a tarball")
         else:
-            raise CommandError("Unknown method to install a package")
+            package = Package.from_repo(
+                plugin,
+                plugin_dir,
+                index_url,
+                upgrade)
 
-        self.log.info("Installed package: %s" % (package.name,))
+        self.log.info("Installed package successfully [%s]:%s" %
+                      (package.name, package.version[0:6]))

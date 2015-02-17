@@ -14,14 +14,13 @@ from six.moves import urllib
 class SearchCommand(Command):
     """Search plugins in online repository"""
     def print_item(self, item):
-        sys.stdout.write("%(id)-20s %(description)s\n" % item)
-        sys.stdout.write("    %s\n" % (", ".join([x["id"]
-                                       for x in item["version"]])))
+        sys.stdout.write("%(name)-20s %(description)s\n" % item)
 
     def execute(self):
-        plugin_url = self.config.get("plugin_url",
+        plugin_url = self.args.index_url or \
+                     self.config.get("plugin_url",
                                      "https://plugins.drove.io").strip("/")
-        request = ("%s/api/1/plugin/search?%s" %
+        request = ("%s/api/1/search?%s" %
                    (plugin_url,
                     urllib.parse.urlencode({"q": self.args.plugin})))
 

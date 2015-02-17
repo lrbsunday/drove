@@ -21,12 +21,12 @@ class TestRemoveCommand(unittest.TestCase):
         def __init__(self, *arg, **kwarg):
             pass
 
-        @classmethod
-        def from_installed(*args, **kwarg):
-            return TestRemoveCommand._mock_remove()
-
         def remove(self):
             pass
+
+    @staticmethod
+    def _mock_find(path=None, pattern=None):
+        return [TestRemoveCommand._mock_remove()]
 
     def test_remove_command(self, install_global=False, plugin=__file__):
         self.plugin = TestRemoveCommand._mock_str(plugin)
@@ -39,7 +39,8 @@ class TestRemoveCommand(unittest.TestCase):
             config["plugin_dir"] = [tmp_dir]
 
             with temp.variables({
-                "drove.command.remove.Package": TestRemoveCommand._mock_remove
+                "drove.command.remove.find_package":
+                   TestRemoveCommand._mock_find
             }):
                 cmd = RemoveCommand(config, self, getLogger())
                 assert cmd.__class__.__name__ == "RemoveCommand"
@@ -59,7 +60,4 @@ class TestRemoveCommand(unittest.TestCase):
 
     def test_remove_command_error_plugin(self):
         self.test_remove_command_error("author")
-
-
-
 

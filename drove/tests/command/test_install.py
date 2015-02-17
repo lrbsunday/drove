@@ -14,6 +14,7 @@ from drove.command.install import InstallCommand
 
 class TestInstallCommand(unittest.TestCase):
     name = "test.install"
+    version = "0"
 
     class _mock_str(str):
         pass
