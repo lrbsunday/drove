@@ -12,10 +12,9 @@ from drove.command import CommandError
 from drove.util.log import getLogger
 
 _test_result_msg = """{
-   "results": [{"id": "none",
-                "description": "none",
-                "version": [{"id":"1.0", "download_url": "http://none"},
-                            {"id":"1.1", "download_url": "http://none"}]}]
+   "results": [{"name": "none.none",
+                "url": "http://none",
+                "description": "none"}]
 }
 """
 
@@ -27,6 +26,7 @@ _test_result_empty = """{
 
 
 class TestSearchCommand(unittest.TestCase):
+    index_url = "http://localhost"
 
     def test_search(self, result=_test_result_msg):
         self.plugin = "none.none"
