@@ -71,7 +71,7 @@ class TestPlugin(unittest.TestCase):
 
     def test_plugin_load(self):
         """testing plugin: load()"""
-        x = Plugin.load("droveio.log", self.config, self.channel)
+        x = Plugin.load("internal.log", self.config, self.channel)
         assert x.__class__.__name__ == "LogPlugin"
 
     def test_plugin_rw(self):
@@ -110,7 +110,7 @@ class TestPlugin(unittest.TestCase):
 
     def test_plugin_manager(self):
         """Testing PluginManager: basic behaviour"""
-        self.config["plugin.droveio.log"] = True
+        self.config["plugin.internal.log"] = True
         x = PluginManager(self.config, self.channel)
         assert x.plugins[0].__class__.__name__ == "LogPlugin"
         x.plugins = [TestingPlugin(self.config, self.channel)]

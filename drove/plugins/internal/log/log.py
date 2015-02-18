@@ -11,5 +11,5 @@ from drove.plugin import Plugin
 
 class LogPlugin(Plugin):
     def write(self, channel):
-        for data in channel.receive("droveio.log"):
-            self.log.debug(str(data))
+        for data in channel.receive("internal.log"):
+            self.log.info(str(data))

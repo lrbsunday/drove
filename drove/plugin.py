@@ -67,10 +67,10 @@ class Plugin(object):
         kls_name = "%sPlugin" % (dir_name.title(),)
         mod_name = "%s.%s" % (plugin_name, dir_name,)
 
-        kls = importer.load(mod_name, kls_name, path=plugin_dir, anchor=None)
+        kls = importer.load(plugin_name, kls_name, path=plugin_dir, anchor=None)
 
         obj = kls(config, channel)
-        obj.plugin_name = mod_name
+        obj.plugin_name = plugin_name
         obj.log.info("Using plugin: %s" % (plugin_name,))
         channel.subscribe(plugin_name)
 

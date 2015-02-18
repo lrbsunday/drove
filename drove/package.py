@@ -136,8 +136,8 @@ class Package(object):
                     # nothing to do, package does not needs upgrade
                     return package
 
-            package.install(version)
             package.run_tests()
+            package.install(version)
             return package
 
     @classmethod
@@ -277,7 +277,7 @@ class Package(object):
         sys.path.insert(0, self.new_version_path)
         for result in tester.run_tests(test_path):
             for error in result.errors:
-                raise PackageError("Test failed due to internal test error")
+                raise PackageError("Test error: %s" % (error[1],))
 
             if not result.wasSuccessful():
                 for fail in result.failures:

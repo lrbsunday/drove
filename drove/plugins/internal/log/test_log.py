@@ -14,9 +14,9 @@ class TestLogPlugin(unittest.TestCase):
     def test_log_plugin(self):
         config = Config()
         channel = Channel()
-        channel.subscribe("droveio.log")
+        channel.subscribe("internal.log")
         channel.publish(Value("test", 0))
 
         kls = log.LogPlugin(config, channel)
-        kls.plugin_name = "droveio.log"
+        kls.plugin_name = "internal.log"
         kls.write(channel)

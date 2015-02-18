@@ -29,7 +29,10 @@ class InstallCommand(Command):
         plugin_dir = self.config.get("plugin_dir", None)
         plugin = self.args.plugin
         upgrade = self.args.upgrade
-        index_url = self.args.index_url
+
+        index_url = self.args.index_url or \
+                     self.config.get("plugin_url",
+                                     "https://plugins.drove.io").strip("/")
         install_global = self.args.install_global
 
         if not plugin_dir:

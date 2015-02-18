@@ -11,7 +11,7 @@ from base64 import b64decode
 
 import drove.package
 from drove.util import temp
-from drove.package import Package, PackageError, find_package
+from drove.package import Package, PackageError, find_package, _FileSum
 
 
 # base64 encoded tar.gz for tests.
@@ -161,6 +161,12 @@ class TestPackage(unittest.TestCase):
             "glob.glob": lambda *a,**k:["d.version"]
         }):
             find_package(None, None)
+
+    def test_package_filesum(self):
+        with open(__file__, 'rb') as f:
+            x = _FileSum(f)
+            x.tell()
+            x.seek(0,0)
 
     def test_package_remove_nonexistant(self):
         with self.assertRaises(PackageError):
