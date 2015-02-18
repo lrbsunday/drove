@@ -74,9 +74,11 @@ class TestInstallCommand(unittest.TestCase):
         package.urllib.request.urlopen = lambda *a, **kw: BytesIO(
             b(_test_result_msg)
         )
-        package.Package.from_url = lambda *a, **kw: package.Package(
-            "none", "none",
-            "12345678", "", "")
+        package.Package.from_url = staticmethod(
+            lambda *a, **kw: package.Package(
+                "none", "none",
+                "12345678", "", "")
+        )
         self.test_install_command(False, "none")
 
 

@@ -52,6 +52,12 @@ class _FileSum(object):
         self._signature.update(out)
         return out
 
+    def tell(self, *args, **kwargs):
+        return self.fd.tell(*args, **kwargs)
+
+    def seek(self, *args, **kwargs):
+        return self.fd.seek(*args, **kwargs)
+
     @property
     def signature(self):
         return self._signature.hexdigest()
