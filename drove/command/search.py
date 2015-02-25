@@ -18,7 +18,7 @@ class SearchCommand(Command):
 
     def execute(self):
         plugin_url = self.args.index_url or \
-                     self.config.get("plugin_url",
+                     self.config.get("catalog.url",
                                      "https://plugins.drove.io").strip("/")
         request = ("%s/api/1/search?%s" %
                    (plugin_url,
